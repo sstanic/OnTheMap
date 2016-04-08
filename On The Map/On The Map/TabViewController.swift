@@ -14,24 +14,52 @@ class TabViewController: UITabBarController {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
     }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
     
     @IBAction func logout(sender: AnyObject) {
+        
+        if OTMClient.sharedInstance().fbToken != nil {
+            
+            OTMClient.sharedInstance().logoutFromFacebook()
+            self.dismissViewControllerAnimated(true, completion: nil)
+        }
+        else {
+            
+            OTMClient.sharedInstance().logoutFromUdacity() { (success, error) in
+                
+//                print("====")
+//                print("logout success. \(success)")
+//                print("session id: \(OTMClient.sharedInstance().sessionID!)")
+//                print("account key: \(OTMClient.sharedInstance().userID!)")
+//                print("  ")
+                
+                dispatch_async(dispatch_get_main_queue()) {
+                    if success {
+                        self.dismissViewControllerAnimated(true, completion: nil)
+                    }
+                    else {
+                        self.showAlert(error!)
+                    }
+                }
+            }
+        }
     }
     
     @IBAction func postInformation(sender: AnyObject) {
         let infoPostController = self.storyboard?.instantiateViewControllerWithIdentifier("informationPosting") as! InformationPostingViewController
-        
         presentViewController(infoPostController, animated: true, completion: nil)
     }
     
     @IBAction func refreshData(sender: AnyObject) {
+        // ....
     }
     
-    
+    private func showAlert(alertMessage: String) {
+        let alertController = UIAlertController(title: "Info", message: alertMessage, preferredStyle: UIAlertControllerStyle.Alert)
+        let action = UIAlertAction(title: "OK", style: .Default) { (action:UIAlertAction!) in
+        }
+        alertController.addAction(action)
+        
+        presentViewController(alertController, animated: true, completion: nil)
+    }
 }
 

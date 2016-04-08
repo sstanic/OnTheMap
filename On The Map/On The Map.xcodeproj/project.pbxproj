@@ -15,10 +15,14 @@
 		12C396D71CAE4AE600F566C4 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12C396D61CAE4AE600F566C4 /* LoginViewController.swift */; };
 		12C396D91CAE4B2900F566C4 /* MapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12C396D81CAE4B2900F566C4 /* MapViewController.swift */; };
 		12C396DB1CAE4B4400F566C4 /* StudentsListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12C396DA1CAE4B4400F566C4 /* StudentsListViewController.swift */; };
-		12C396DD1CAF181200F566C4 /* externalResources in Resources */ = {isa = PBXBuildFile; fileRef = 12C396DC1CAF181200F566C4 /* externalResources */; };
-		12C396DF1CAF232500F566C4 /* BaseViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12C396DE1CAF232500F566C4 /* BaseViewController.swift */; };
+		12C396DD1CAF181200F566C4 /* external Resources in Resources */ = {isa = PBXBuildFile; fileRef = 12C396DC1CAF181200F566C4 /* external Resources */; };
 		12C396E51CAF287C00F566C4 /* NavigationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12C396E41CAF287C00F566C4 /* NavigationViewController.swift */; };
 		12C396E71CAF7D6A00F566C4 /* InformationPostingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12C396E61CAF7D6A00F566C4 /* InformationPostingViewController.swift */; };
+		12C396E91CB307A400F566C4 /* OTMClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12C396E81CB307A400F566C4 /* OTMClient.swift */; };
+		12C396EC1CB307DD00F566C4 /* OTMClientContants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12C396EB1CB307DD00F566C4 /* OTMClientContants.swift */; };
+		12C396EF1CB59D4200F566C4 /* FBSDKCoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 12C396EE1CB59D4200F566C4 /* FBSDKCoreKit.framework */; };
+		12C396F11CB59ECE00F566C4 /* FBSDKLoginKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 12C396F01CB59ECE00F566C4 /* FBSDKLoginKit.framework */; };
+		12C396F41CB5A10200F566C4 /* ObjectiveCFile.m in Sources */ = {isa = PBXBuildFile; fileRef = 12C396F31CB5A10200F566C4 /* ObjectiveCFile.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -32,10 +36,16 @@
 		12C396D61CAE4AE600F566C4 /* LoginViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
 		12C396D81CAE4B2900F566C4 /* MapViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MapViewController.swift; sourceTree = "<group>"; };
 		12C396DA1CAE4B4400F566C4 /* StudentsListViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StudentsListViewController.swift; sourceTree = "<group>"; };
-		12C396DC1CAF181200F566C4 /* externalResources */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = externalResources; sourceTree = "<group>"; };
-		12C396DE1CAF232500F566C4 /* BaseViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseViewController.swift; sourceTree = "<group>"; };
+		12C396DC1CAF181200F566C4 /* external Resources */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "external Resources"; sourceTree = "<group>"; };
 		12C396E41CAF287C00F566C4 /* NavigationViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NavigationViewController.swift; sourceTree = "<group>"; };
 		12C396E61CAF7D6A00F566C4 /* InformationPostingViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InformationPostingViewController.swift; sourceTree = "<group>"; };
+		12C396E81CB307A400F566C4 /* OTMClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OTMClient.swift; sourceTree = "<group>"; };
+		12C396EB1CB307DD00F566C4 /* OTMClientContants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OTMClientContants.swift; sourceTree = "<group>"; };
+		12C396EE1CB59D4200F566C4 /* FBSDKCoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = FBSDKCoreKit.framework; sourceTree = "<group>"; };
+		12C396F01CB59ECE00F566C4 /* FBSDKLoginKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = FBSDKLoginKit.framework; sourceTree = "<group>"; };
+		12C396F21CB5A10200F566C4 /* On The Map-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "On The Map-Bridging-Header.h"; sourceTree = "<group>"; };
+		12C396F31CB5A10200F566C4 /* ObjectiveCFile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ObjectiveCFile.m; sourceTree = "<group>"; };
+		12C396F51CB5A14400F566C4 /* ObjectiveCFile.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ObjectiveCFile.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -43,6 +53,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				12C396F11CB59ECE00F566C4 /* FBSDKLoginKit.framework in Frameworks */,
+				12C396EF1CB59D4200F566C4 /* FBSDKCoreKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -52,6 +64,7 @@
 		12C396B81CACEAC100F566C4 = {
 			isa = PBXGroup;
 			children = (
+				12C396ED1CB59D2300F566C4 /* Frameworks */,
 				12C396C31CACEAC100F566C4 /* On The Map */,
 				12C396C21CACEAC100F566C4 /* Products */,
 			);
@@ -68,6 +81,7 @@
 		12C396C31CACEAC100F566C4 /* On The Map */ = {
 			isa = PBXGroup;
 			children = (
+				12C396EA1CB307B900F566C4 /* Client */,
 				12C396C41CACEAC100F566C4 /* AppDelegate.swift */,
 				12C396C61CACEAC100F566C4 /* TabViewController.swift */,
 				12C396C81CACEAC100F566C4 /* Main.storyboard */,
@@ -77,12 +91,32 @@
 				12C396D61CAE4AE600F566C4 /* LoginViewController.swift */,
 				12C396D81CAE4B2900F566C4 /* MapViewController.swift */,
 				12C396DA1CAE4B4400F566C4 /* StudentsListViewController.swift */,
-				12C396DC1CAF181200F566C4 /* externalResources */,
-				12C396DE1CAF232500F566C4 /* BaseViewController.swift */,
+				12C396DC1CAF181200F566C4 /* external Resources */,
 				12C396E41CAF287C00F566C4 /* NavigationViewController.swift */,
 				12C396E61CAF7D6A00F566C4 /* InformationPostingViewController.swift */,
 			);
 			path = "On The Map";
+			sourceTree = "<group>";
+		};
+		12C396EA1CB307B900F566C4 /* Client */ = {
+			isa = PBXGroup;
+			children = (
+				12C396E81CB307A400F566C4 /* OTMClient.swift */,
+				12C396EB1CB307DD00F566C4 /* OTMClientContants.swift */,
+			);
+			name = Client;
+			sourceTree = "<group>";
+		};
+		12C396ED1CB59D2300F566C4 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				12C396F01CB59ECE00F566C4 /* FBSDKLoginKit.framework */,
+				12C396EE1CB59D4200F566C4 /* FBSDKCoreKit.framework */,
+				12C396F31CB5A10200F566C4 /* ObjectiveCFile.m */,
+				12C396F21CB5A10200F566C4 /* On The Map-Bridging-Header.h */,
+				12C396F51CB5A14400F566C4 /* ObjectiveCFile.h */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -147,7 +181,7 @@
 				12C396CF1CACEAC100F566C4 /* LaunchScreen.storyboard in Resources */,
 				12C396CC1CACEAC100F566C4 /* Assets.xcassets in Resources */,
 				12C396CA1CACEAC100F566C4 /* Main.storyboard in Resources */,
-				12C396DD1CAF181200F566C4 /* externalResources in Resources */,
+				12C396DD1CAF181200F566C4 /* external Resources in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -160,12 +194,14 @@
 			files = (
 				12C396DB1CAE4B4400F566C4 /* StudentsListViewController.swift in Sources */,
 				12C396D71CAE4AE600F566C4 /* LoginViewController.swift in Sources */,
+				12C396E91CB307A400F566C4 /* OTMClient.swift in Sources */,
 				12C396E71CAF7D6A00F566C4 /* InformationPostingViewController.swift in Sources */,
 				12C396C71CACEAC100F566C4 /* TabViewController.swift in Sources */,
+				12C396EC1CB307DD00F566C4 /* OTMClientContants.swift in Sources */,
 				12C396C51CACEAC100F566C4 /* AppDelegate.swift in Sources */,
+				12C396F41CB5A10200F566C4 /* ObjectiveCFile.m in Sources */,
 				12C396D91CAE4B2900F566C4 /* MapViewController.swift in Sources */,
 				12C396E51CAF287C00F566C4 /* NavigationViewController.swift in Sources */,
-				12C396DF1CAF232500F566C4 /* BaseViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -278,13 +314,20 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
 				INFOPLIST_FILE = "On The Map/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "Sascha-Stanic.On-The-Map";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
+				SWIFT_OBJC_BRIDGING_HEADER = "On The Map-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
 			name = Debug;
 		};
@@ -292,13 +335,19 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
 				INFOPLIST_FILE = "On The Map/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "Sascha-Stanic.On-The-Map";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
+				SWIFT_OBJC_BRIDGING_HEADER = "On The Map-Bridging-Header.h";
 			};
 			name = Release;
 		};

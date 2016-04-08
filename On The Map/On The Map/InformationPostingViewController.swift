@@ -29,10 +29,6 @@ class InformationPostingViewController: UIViewController {
         
         hideMap()
     }
-    
-    override func viewDidAppear(animated: Bool) {
-//        hideMap()
-    }
 
     @IBAction func cancel(sender: AnyObject) {
         dismissViewControllerAnimated(true, completion: nil)
@@ -43,6 +39,7 @@ class InformationPostingViewController: UIViewController {
     }
     
     @IBAction func submit(sender: AnyObject) {
+        // ....
     }
     
     func changeButtonStyle(button: UIButton) {
