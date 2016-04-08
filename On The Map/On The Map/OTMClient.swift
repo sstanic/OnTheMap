@@ -83,20 +83,20 @@ class OTMClient : NSObject {
     
     private func saveLoginCredentials(results: [String:AnyObject], completionHandlerForSaveLoginCredentials: (success: Bool, error: NSError?) -> Void) {
         
-        guard let session = results["session"] else {
-            let userInfo = [NSLocalizedDescriptionKey : "Parameter 'session' not found in login-results."]
+        guard let session = results[OTMClient.JSONResponseKeys.Session] else {
+            let userInfo = [NSLocalizedDescriptionKey : "Parameter '\(OTMClient.JSONResponseKeys.Session)' not found in login-results."]
             completionHandlerForSaveLoginCredentials(success: false, error: NSError(domain: "saveLoginCredentials", code: 1, userInfo: userInfo))
             return
         }
         
-        guard let account = results["account"] else {
-            let userInfo = [NSLocalizedDescriptionKey : "Parameter 'account' not found in login-results."]
+        guard let account = results[OTMClient.JSONResponseKeys.Account] else {
+            let userInfo = [NSLocalizedDescriptionKey : "Parameter '\(OTMClient.JSONResponseKeys.Account)' not found in login-results."]
             completionHandlerForSaveLoginCredentials(success: false, error: NSError(domain: "saveLoginCredentials", code: 1, userInfo: userInfo))
             return
         }
         
-        self.sessionID = session["id"] as? String
-        self.userID = account["key"] as? String
+        self.sessionID = session[OTMClient.JSONResponseKeys.SessionID] as? String
+        self.userID = account[OTMClient.JSONResponseKeys.UserID] as? String
         
         completionHandlerForSaveLoginCredentials(success: true, error: nil)
         
@@ -191,7 +191,7 @@ class OTMClient : NSObject {
             // check for errors and call the completion handler            
             if let error = error {
                 print(error)
-                completionHandlerForLogout(success: false, results: nil, errorString: "Login Failed.")
+                completionHandlerForLogout(success: false, results: nil, errorString: "Logout Failed.")
                 
             } else {
                 if let results = results as? [String:AnyObject] {
@@ -199,35 +199,11 @@ class OTMClient : NSObject {
                     completionHandlerForLogout(success: true, results: results, errorString: nil)
                     
                 } else {
-                    print("Could not find \(OTMClient.JSONResponseKeys.Session) in \(results)")
-                    completionHandlerForLogout(success: false, results: nil, errorString: "Login Failed (Session ID).")
+                    completionHandlerForLogout(success: false, results: nil, errorString: "Logout Failed.")
                 }
             }
         }
     }
-    
-//    private func getUserID(completionHandlerForUserID: (success: Bool, userID: Int?, errorString: String?) -> Void) {
-//        
-//        /* 1. Specify parameters, method (if has {key}), and HTTP body (if POST) */
-//        let parameters = [OTMClient.ParameterKeys.SessionID: OTMClient.sharedInstance().sessionID!]
-//        
-//        /* 2. Make the request */
-//        taskForGETMethod(Methods.Account, parameters: parameters) { (results, error) in
-//            
-//            /* 3. Send the desired value(s) to completion handler */
-//            if let error = error {
-//                print(error)
-//                completionHandlerForUserID(success: false, userID: nil, errorString: "Login Failed (User ID).")
-//            } else {
-//                if let userID = results[OTMClient.JSONResponseKeys.UserID] as? Int {
-//                    completionHandlerForUserID(success: true, userID: userID, errorString: nil)
-//                } else {
-//                    print("Could not find \(OTMClient.JSONResponseKeys.UserID) in \(results)")
-//                    completionHandlerForUserID(success: false, userID: nil, errorString: "Login Failed (User ID).")
-//                }
-//            }
-//        }
-//    }
     
     func taskForPOSTMethod(method: String, parameters: [String:AnyObject], jsonBody: String, completionHandlerForPOST: (result: AnyObject!, error: NSError?) -> Void) -> NSURLSessionDataTask {
         

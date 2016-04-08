@@ -26,41 +26,39 @@ extension OTMClient {
         static let AuthenticationSessionNew = "/session"
     }
     
-    // URL Keys
-    struct URLKeys {
-        static let UserID = "id"
-    }
-    
     // MARK: Parameter Keys
     struct ParameterKeys {
-        static let ApiKey = "api_key"
-        static let SessionID = "session_id"
-        static let RequestToken = "request_token"
-        static let Query = "query"
+//        static let ApiKey = "api_key"
+//        static let SessionID = "id"
+//        static let RequestToken = "request_token"
+//        static let Query = "query"
         
         
     }
     
     // MARK: JSON Body Keys
     struct JSONBodyKeys {
-        static let MediaType = "media_type"
-        static let MediaID = "media_id"
-        static let Favorite = "favorite"
-        static let Watchlist = "watchlist"
+//        static let MediaType = "media_type"
+//        static let MediaID = "media_id"
+//        static let Favorite = "favorite"
+//        static let Watchlist = "watchlist"
     }
     
     // MARK: JSON Response Keys
     struct JSONResponseKeys {
         
-        // MARK: General
-        static let StatusMessage = "status_message"
-        static let StatusCode = "status_code"
+//        // General
+//        static let StatusMessage = "status_message"
+//        static let StatusCode = "status_code"
         
-        // MARK: Authorization
+        // Authorization
         static let RequestToken = "request_token"
         static let Session = "session"
+        static let Account = "account"
         
-        // MARK: Account
-        static let UserID = "id"
+        static let SessionID = "id"
+        
+        // Account
+        static let UserID = "key"
     }
 }

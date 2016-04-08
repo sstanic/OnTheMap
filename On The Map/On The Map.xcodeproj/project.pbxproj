@@ -22,7 +22,6 @@
 		12C396EC1CB307DD00F566C4 /* OTMClientContants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12C396EB1CB307DD00F566C4 /* OTMClientContants.swift */; };
 		12C396EF1CB59D4200F566C4 /* FBSDKCoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 12C396EE1CB59D4200F566C4 /* FBSDKCoreKit.framework */; };
 		12C396F11CB59ECE00F566C4 /* FBSDKLoginKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 12C396F01CB59ECE00F566C4 /* FBSDKLoginKit.framework */; };
-		12C396F41CB5A10200F566C4 /* ObjectiveCFile.m in Sources */ = {isa = PBXBuildFile; fileRef = 12C396F31CB5A10200F566C4 /* ObjectiveCFile.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -44,8 +43,6 @@
 		12C396EE1CB59D4200F566C4 /* FBSDKCoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = FBSDKCoreKit.framework; sourceTree = "<group>"; };
 		12C396F01CB59ECE00F566C4 /* FBSDKLoginKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = FBSDKLoginKit.framework; sourceTree = "<group>"; };
 		12C396F21CB5A10200F566C4 /* On The Map-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "On The Map-Bridging-Header.h"; sourceTree = "<group>"; };
-		12C396F31CB5A10200F566C4 /* ObjectiveCFile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ObjectiveCFile.m; sourceTree = "<group>"; };
-		12C396F51CB5A14400F566C4 /* ObjectiveCFile.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ObjectiveCFile.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -112,9 +109,7 @@
 			children = (
 				12C396F01CB59ECE00F566C4 /* FBSDKLoginKit.framework */,
 				12C396EE1CB59D4200F566C4 /* FBSDKCoreKit.framework */,
-				12C396F31CB5A10200F566C4 /* ObjectiveCFile.m */,
 				12C396F21CB5A10200F566C4 /* On The Map-Bridging-Header.h */,
-				12C396F51CB5A14400F566C4 /* ObjectiveCFile.h */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -199,7 +194,6 @@
 				12C396C71CACEAC100F566C4 /* TabViewController.swift in Sources */,
 				12C396EC1CB307DD00F566C4 /* OTMClientContants.swift in Sources */,
 				12C396C51CACEAC100F566C4 /* AppDelegate.swift in Sources */,
-				12C396F41CB5A10200F566C4 /* ObjectiveCFile.m in Sources */,
 				12C396D91CAE4B2900F566C4 /* MapViewController.swift in Sources */,
 				12C396E51CAF287C00F566C4 /* NavigationViewController.swift in Sources */,
 			);
@@ -370,6 +364,7 @@
 				12C396D51CACEAC100F566C4 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
