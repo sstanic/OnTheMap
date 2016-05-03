@@ -17,12 +17,15 @@
                         <viewControllerLayoutGuide type="bottom" id="Lwj-J4-9Lo"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="QVo-ih-bfJ">
-                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="551"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" mapType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="YrS-ki-yid">
                                 <rect key="frame" x="0.0" y="64" width="600" height="487"/>
                             </mapView>
+                            <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="5rC-Tf-enb">
+                                <rect key="frame" x="290" y="298" width="20" height="20"/>
+                            </activityIndicatorView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
@@ -32,8 +35,10 @@
                             <constraint firstItem="YrS-ki-yid" firstAttribute="leading" secondItem="QVo-ih-bfJ" secondAttribute="leadingMargin" constant="-20" id="e6l-aI-exY"/>
                         </constraints>
                     </view>
+                    <extendedEdge key="edgesForExtendedLayout" top="YES"/>
                     <tabBarItem key="tabBarItem" title="Map" image="map" id="t32-GF-Ofo"/>
                     <connections>
+                        <outlet property="activityIndicator" destination="5rC-Tf-enb" id="E0i-wK-2Rx"/>
                         <outlet property="mapView" destination="YrS-ki-yid" id="hEE-lF-7Qg"/>
                     </connections>
                 </viewController>
@@ -56,7 +61,7 @@
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="qFf-I1-AEh" userLabel="urlView">
                                 <rect key="frame" x="0.0" y="72" width="600" height="156"/>
                                 <subviews>
-                                    <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="enter your uri" textAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="VOd-LQ-Hra" userLabel="urlText">
+                                    <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="enter your uri" textAlignment="center" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="VOd-LQ-Hra" userLabel="urlText">
                                         <rect key="frame" x="0.0" y="61" width="600" height="34"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="28"/>
                                         <textInputTraits key="textInputTraits"/>
@@ -148,6 +153,9 @@
                                     <action selector="submit:" destination="WE9-Wf-G5x" eventType="touchUpInside" id="Ctk-QY-Trv"/>
                                 </connections>
                             </button>
+                            <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="Vz4-SL-KGt">
+                                <rect key="frame" x="290" y="290" width="20" height="20"/>
+                            </activityIndicatorView>
                         </subviews>
                         <color key="backgroundColor" red="0.93725490199999995" green="0.93725490199999995" blue="0.95686274510000002" alpha="1" colorSpace="calibratedRGB"/>
                         <constraints>
@@ -155,6 +163,7 @@
                             <constraint firstItem="hcJ-Db-DC7" firstAttribute="leading" secondItem="dC7-MW-K7G" secondAttribute="leadingMargin" constant="-20" id="0e9-sR-op4"/>
                             <constraint firstItem="WA8-t7-qTA" firstAttribute="top" secondItem="QV1-zE-RaR" secondAttribute="bottom" constant="20" id="175-x4-sbQ"/>
                             <constraint firstItem="7uN-ar-9Q3" firstAttribute="top" secondItem="WA8-t7-qTA" secondAttribute="bottom" constant="20" id="7cE-Tj-x2Y"/>
+                            <constraint firstItem="Vz4-SL-KGt" firstAttribute="centerX" secondItem="dC7-MW-K7G" secondAttribute="centerX" id="7ee-bd-j77"/>
                             <constraint firstAttribute="trailingMargin" secondItem="qFf-I1-AEh" secondAttribute="trailing" constant="-20" id="8bh-iN-SJQ"/>
                             <constraint firstItem="qFf-I1-AEh" firstAttribute="top" secondItem="hcJ-Db-DC7" secondAttribute="bottom" id="Buk-zk-MEd"/>
                             <constraint firstItem="7uN-ar-9Q3" firstAttribute="top" secondItem="pSt-lC-t56" secondAttribute="bottom" id="G3g-zN-FFY"/>
@@ -167,6 +176,7 @@
                             <constraint firstItem="pSt-lC-t56" firstAttribute="top" secondItem="sAq-W3-Ynd" secondAttribute="bottom" constant="20" id="VXu-EU-NVP"/>
                             <constraint firstItem="QV1-zE-RaR" firstAttribute="top" secondItem="sAq-W3-Ynd" secondAttribute="bottom" constant="20" id="Xhd-pj-sR5"/>
                             <constraint firstItem="qFf-I1-AEh" firstAttribute="centerX" secondItem="dC7-MW-K7G" secondAttribute="centerX" id="YjA-u3-K0j"/>
+                            <constraint firstItem="Vz4-SL-KGt" firstAttribute="centerY" secondItem="dC7-MW-K7G" secondAttribute="centerY" id="cNu-fs-13Z"/>
                             <constraint firstItem="Q64-cL-XMH" firstAttribute="centerX" secondItem="dC7-MW-K7G" secondAttribute="centerX" id="dAp-GM-6q5"/>
                             <constraint firstItem="QV1-zE-RaR" firstAttribute="leading" secondItem="dC7-MW-K7G" secondAttribute="leadingMargin" constant="-20" id="iLL-0j-aXy"/>
                             <constraint firstItem="QV1-zE-RaR" firstAttribute="centerX" secondItem="dC7-MW-K7G" secondAttribute="centerX" id="l8v-d8-nVz"/>
@@ -178,6 +188,7 @@
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="activityIndicator" destination="Vz4-SL-KGt" id="nEs-To-jFw"/>
                         <outlet property="findOnTheMapButton" destination="WA8-t7-qTA" id="GQi-wl-Ku1"/>
                         <outlet property="mapView" destination="pSt-lC-t56" id="WOg-bo-HUz"/>
                         <outlet property="questionStack" destination="sAq-W3-Ynd" id="sM3-hi-3oR"/>
@@ -327,26 +338,74 @@
         <scene sceneID="3E7-ib-apg">
             <objects>
                 <tableViewController id="S5c-6h-hUC" customClass="StudentsListViewController" customModule="On_The_Map" customModuleProvider="target" sceneMemberID="viewController">
-                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" id="l19-Ph-1xN">
-                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" rowHeight="45" sectionHeaderHeight="28" sectionFooterHeight="28" id="l19-Ph-1xN">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="551"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <inset key="separatorInset" minX="4" minY="0.0" maxX="0.0" maxY="0.0"/>
                         <prototypes>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="studentTableCell" id="DSp-30-P3r">
-                                <rect key="frame" x="0.0" y="92" width="600" height="44"/>
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" shouldIndentWhileEditing="NO" reuseIdentifier="studentTableViewCell" rowHeight="66" id="DSp-30-P3r" customClass="CustomStudentsListTableViewCell" customModule="On_The_Map" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="92" width="600" height="66"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="DSp-30-P3r" id="ALC-Cv-Ev1">
-                                    <rect key="frame" x="0.0" y="0.0" width="600" height="43"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="600" height="65"/>
                                     <autoresizingMask key="autoresizingMask"/>
+                                    <subviews>
+                                        <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="map" translatesAutoresizingMaskIntoConstraints="NO" id="4wR-E3-7Gq">
+                                            <rect key="frame" x="16" y="17" width="30" height="30"/>
+                                        </imageView>
+                                        <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="6" translatesAutoresizingMaskIntoConstraints="NO" id="9Ar-9r-Fow">
+                                            <rect key="frame" x="66" y="8" width="526" height="48"/>
+                                            <subviews>
+                                                <textField opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="John Doe" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="z2T-N5-6ig">
+                                                    <rect key="frame" x="0.0" y="0.0" width="526" height="21"/>
+                                                    <nil key="textColor"/>
+                                                    <fontDescription key="fontDescription" type="boldSystem" pointSize="17"/>
+                                                    <textInputTraits key="textInputTraits"/>
+                                                </textField>
+                                                <textField opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="http://www.lorem-ipsum.com" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="I8Z-gE-NSq">
+                                                    <rect key="frame" x="0.0" y="27" width="526" height="21"/>
+                                                    <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <textInputTraits key="textInputTraits"/>
+                                                </textField>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstItem="I8Z-gE-NSq" firstAttribute="leading" secondItem="9Ar-9r-Fow" secondAttribute="leading" id="1JI-Tb-1Ej"/>
+                                                <constraint firstItem="z2T-N5-6ig" firstAttribute="top" secondItem="9Ar-9r-Fow" secondAttribute="topMargin" id="UIj-73-gqL"/>
+                                                <constraint firstItem="z2T-N5-6ig" firstAttribute="trailing" secondItem="9Ar-9r-Fow" secondAttribute="trailingMargin" id="eRb-Gm-lCB"/>
+                                                <constraint firstAttribute="bottom" secondItem="I8Z-gE-NSq" secondAttribute="bottom" id="erH-Ga-Y7U"/>
+                                                <constraint firstItem="z2T-N5-6ig" firstAttribute="leading" secondItem="9Ar-9r-Fow" secondAttribute="leadingMargin" id="mgr-oP-CEy"/>
+                                                <constraint firstAttribute="trailing" secondItem="I8Z-gE-NSq" secondAttribute="trailing" id="oIf-aT-g5m"/>
+                                            </constraints>
+                                        </stackView>
+                                    </subviews>
+                                    <constraints>
+                                        <constraint firstItem="4wR-E3-7Gq" firstAttribute="leading" secondItem="ALC-Cv-Ev1" secondAttribute="leadingMargin" constant="8" id="Cti-EW-3Fn"/>
+                                        <constraint firstAttribute="trailingMargin" secondItem="9Ar-9r-Fow" secondAttribute="trailing" id="LyZ-vw-JVh"/>
+                                        <constraint firstItem="9Ar-9r-Fow" firstAttribute="leading" secondItem="4wR-E3-7Gq" secondAttribute="trailing" constant="20" id="fqN-2W-ICd"/>
+                                        <constraint firstItem="9Ar-9r-Fow" firstAttribute="top" secondItem="ALC-Cv-Ev1" secondAttribute="topMargin" id="iNO-Da-VlK"/>
+                                        <constraint firstItem="4wR-E3-7Gq" firstAttribute="centerY" secondItem="ALC-Cv-Ev1" secondAttribute="centerY" id="uJT-cp-7Py"/>
+                                    </constraints>
                                 </tableViewCellContentView>
+                                <inset key="separatorInset" minX="4" minY="0.0" maxX="0.0" maxY="0.0"/>
+                                <connections>
+                                    <outlet property="studentMediaURLTextField" destination="I8Z-gE-NSq" id="G9h-9N-FDG"/>
+                                    <outlet property="studentNameTextField" destination="z2T-N5-6ig" id="ALg-Sh-IEK"/>
+                                </connections>
                             </tableViewCell>
                         </prototypes>
+                        <sections/>
                         <connections>
                             <outlet property="dataSource" destination="S5c-6h-hUC" id="lKn-Hk-noe"/>
                             <outlet property="delegate" destination="S5c-6h-hUC" id="Yb7-7I-qdb"/>
                         </connections>
                     </tableView>
+                    <extendedEdge key="edgesForExtendedLayout" top="YES"/>
                     <tabBarItem key="tabBarItem" title="List" image="table" id="yJE-cv-I41"/>
+                    <connections>
+                        <outlet property="studentsTableView" destination="l19-Ph-1xN" id="go1-hS-TYM"/>
+                    </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="qk0-tl-zWm" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
@@ -372,6 +431,7 @@
         <scene sceneID="tr4-8c-Bhh">
             <objects>
                 <tabBarController automaticallyAdjustsScrollViewInsets="NO" id="SFT-ed-mop" customClass="TabViewController" customModule="On_The_Map" customModuleProvider="target" sceneMemberID="viewController">
+                    <extendedEdge key="edgesForExtendedLayout"/>
                     <toolbarItems/>
                     <navigationItem key="navigationItem" title="On The Map" id="O5J-vP-4Rb">
                         <barButtonItem key="leftBarButtonItem" title="Logout" id="FTI-oX-Vo0">
@@ -380,11 +440,7 @@
                             </connections>
                         </barButtonItem>
                         <rightBarButtonItems>
-                            <barButtonItem systemItem="refresh" id="82X-J8-fY0">
-                                <connections>
-                                    <action selector="refreshData:" destination="SFT-ed-mop" id="LFj-EK-XoU"/>
-                                </connections>
-                            </barButtonItem>
+                            <barButtonItem systemItem="refresh" id="82X-J8-fY0"/>
                             <barButtonItem image="map" id="ILV-iE-cIT">
                                 <connections>
                                     <action selector="postInformation:" destination="SFT-ed-mop" id="6tf-mL-fL6"/>
@@ -397,8 +453,8 @@
                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                     </tabBar>
                     <connections>
-                        <segue destination="afb-ce-hoB" kind="relationship" relationship="viewControllers" id="P49-i6-MAw"/>
                         <segue destination="S5c-6h-hUC" kind="relationship" relationship="viewControllers" id="QrS-Z5-QdB"/>
+                        <segue destination="afb-ce-hoB" kind="relationship" relationship="viewControllers" id="P49-i6-MAw"/>
                     </connections>
                 </tabBarController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="R0i-gB-7GZ" userLabel="First Responder" sceneMemberID="firstResponder"/>

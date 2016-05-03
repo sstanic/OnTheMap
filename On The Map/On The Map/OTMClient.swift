@@ -13,9 +13,12 @@ class OTMClient : NSObject {
     // shared session
     var session = NSURLSession.sharedSession()
     
+    // session data
     var sessionID: String? = nil
-    var userID: String? = nil
+    var userKey: String? = nil
     var fbToken: String? = nil
+    
+    var udacityStudent: UdacityStudent? = nil // app user
     
     func authenticateWithFacebook(token: String, completionHandlerForAuth: (success: Bool, error: NSError?) -> Void) {
         
@@ -83,26 +86,45 @@ class OTMClient : NSObject {
     
     private func saveLoginCredentials(results: [String:AnyObject], completionHandlerForSaveLoginCredentials: (success: Bool, error: NSError?) -> Void) {
         
-        guard let session = results[OTMClient.JSONResponseKeys.Session] else {
-            let userInfo = [NSLocalizedDescriptionKey : "Parameter '\(OTMClient.JSONResponseKeys.Session)' not found in login-results."]
+        guard let session = results[OTMClient.AuthJSONResponseKeys.Session] else {
+            let userInfo = [NSLocalizedDescriptionKey : "Parameter '\(OTMClient.AuthJSONResponseKeys.Session)' not found in login-results."]
             completionHandlerForSaveLoginCredentials(success: false, error: NSError(domain: "saveLoginCredentials", code: 1, userInfo: userInfo))
             return
         }
         
-        guard let account = results[OTMClient.JSONResponseKeys.Account] else {
-            let userInfo = [NSLocalizedDescriptionKey : "Parameter '\(OTMClient.JSONResponseKeys.Account)' not found in login-results."]
+        guard let sId = session[OTMClient.AuthJSONResponseKeys.SessionID] else {
+            let userInfo = [NSLocalizedDescriptionKey : "Parameter '\(OTMClient.AuthJSONResponseKeys.SessionID)' not found in login-results."]
             completionHandlerForSaveLoginCredentials(success: false, error: NSError(domain: "saveLoginCredentials", code: 1, userInfo: userInfo))
             return
         }
         
-        self.sessionID = session[OTMClient.JSONResponseKeys.SessionID] as? String
-        self.userID = account[OTMClient.JSONResponseKeys.UserID] as? String
+        guard let account = results[OTMClient.AuthJSONResponseKeys.Account] else {
+            let userInfo = [NSLocalizedDescriptionKey : "Parameter '\(OTMClient.AuthJSONResponseKeys.Account)' not found in login-results."]
+            completionHandlerForSaveLoginCredentials(success: false, error: NSError(domain: "saveLoginCredentials", code: 1, userInfo: userInfo))
+            return
+        }
         
-        completionHandlerForSaveLoginCredentials(success: true, error: nil)
+        guard let uKey = account[OTMClient.AuthJSONResponseKeys.UserKey] else {
+            let userInfo = [NSLocalizedDescriptionKey : "Parameter '\(OTMClient.AuthJSONResponseKeys.UserKey)' not found in login-results."]
+            completionHandlerForSaveLoginCredentials(success: false, error: NSError(domain: "saveLoginCredentials", code: 1, userInfo: userInfo))
+            return
+        }
         
-        //        let reg = account["registered"] as? Bool
-        //        print("login request results: \(results)")
-        //        print("registered: \(reg)")
+        self.sessionID = sId as? String
+        self.userKey = uKey as? String
+        
+        requestUdacityUserName(self.userKey!) { (success, result, error) in
+            
+            if success {
+                self.udacityStudent = result!
+            }
+            
+            completionHandlerForSaveLoginCredentials(success: true, error: nil)
+            
+            //        let reg = account["registered"] as? Bool
+            print("login request results: \(results)")
+            //        print("registered: \(reg)")
+        }
     }
     
     func logoutFromUdacity(completionHandlerForLogout: (success: Bool, errorString: String?) -> Void) {
@@ -111,13 +133,40 @@ class OTMClient : NSObject {
 //            print("logout request results: \(results!)")
             
             self.sessionID = nil
-            self.userID = nil
+            self.userKey = nil
+            self.udacityStudent = nil
             
             if success {
                 completionHandlerForLogout(success: true, errorString: nil)
             }
             else {
                 completionHandlerForLogout(success: false, errorString: errorString)
+            }
+        }
+    }
+    
+    func requestUdacityUserName(userID: String, completionHandlerForUdacityUserName: (success: Bool, result: UdacityStudent?, error: NSError?) -> Void) {
+
+        getUdacityUserData(userID) { (success, results, error) in
+            
+            if success {
+                if let user = results![UdacityUser.User] {
+                    
+                    let firstName = user["first_name"] as? String ?? ""
+                    let lastName = user["last_name"] as? String ?? ""
+                    let uStudent = UdacityStudent(firstName: firstName, lastName: lastName)
+                    
+                    //                    print("user: \(uStudent)")
+                    
+                    completionHandlerForUdacityUserName(success: true, result: uStudent, error: nil)
+                }
+                else {
+                    let userInfo = [NSLocalizedDescriptionKey : "Parameter '\(OTMClient.AuthJSONResponseKeys.UserKey)' not found in login-results."]
+                    completionHandlerForUdacityUserName(success: false, result: nil, error: NSError(domain: "requestUdacityUserName", code: 1, userInfo: userInfo))
+                }
+            }
+            else {
+                completionHandlerForUdacityUserName(success: false, result: nil, error: error)
             }
         }
     }
@@ -131,7 +180,7 @@ class OTMClient : NSObject {
         let jsonBody = "{\"udacity\": {\"username\": \"\(username)\", \"password\": \"\(password)\"}}"
         
         // make the request
-        taskForPOSTMethod(Methods.AuthenticationSessionNew, parameters: parameters, jsonBody: jsonBody) { (results, error) in
+        taskForPOSTMethod(AuthMethods.AuthenticationSessionNew, parameters: parameters, jsonBody: jsonBody) { (results, error) in
             
             // check for errors and call the completion handler
             if let error = error {
@@ -144,7 +193,7 @@ class OTMClient : NSObject {
                     completionHandlerForAuthentication(success: true, results: results, error: nil)
                     
                 } else {
-                    print("Could not find \(OTMClient.JSONResponseKeys.Session) in \(results)")
+                    print("Could not find \(OTMClient.AuthJSONResponseKeys.Session) in \(results)")
                     completionHandlerForAuthentication(success: false, results: nil, error: error)
                 }
             }
@@ -160,7 +209,7 @@ class OTMClient : NSObject {
         let jsonBody = "{\"facebook_mobile\": {\"access_token\": \"\(accessToken)\"}}"
         
         // make the request
-        taskForPOSTMethod(Methods.AuthenticationSessionNew, parameters: parameters, jsonBody: jsonBody) { (results, error) in
+        taskForPOSTMethod(AuthMethods.AuthenticationSessionNew, parameters: parameters, jsonBody: jsonBody) { (results, error) in
             
             // check for errors and call the completion handler
             if let error = error {
@@ -173,7 +222,7 @@ class OTMClient : NSObject {
                     completionHandlerForAuthentication(success: true, results: results, error: nil)
                     
                 } else {
-                    print("Could not find \(OTMClient.JSONResponseKeys.Session) in \(results)")
+                    print("Could not find \(OTMClient.AuthJSONResponseKeys.Session) in \(results)")
                     completionHandlerForAuthentication(success: false, results: nil, error: error)
                 }
             }
@@ -186,7 +235,7 @@ class OTMClient : NSObject {
         let parameters = [String:AnyObject]()
         
         // make the request
-        taskForDELETEMethod(Methods.AuthenticationSessionNew, parameters: parameters) { (results, error) in
+        taskForDELETEMethod(AuthMethods.AuthenticationSessionNew, parameters: parameters) { (results, error) in
             
             // check for errors and call the completion handler            
             if let error = error {
@@ -205,16 +254,38 @@ class OTMClient : NSObject {
         }
     }
     
+    func getUdacityUserData(userId: String, completionHandlerForUserData: (success: Bool, results: [String:AnyObject]?, error: NSError?) -> Void) {
+        
+//        print("get udacity user data. User id: \(userId)")
+        
+        // specify parameters
+        let parameters = [String:AnyObject]()
+        let method = "/users/\(userId)"
+        
+        // make the request
+        taskForGETMethod(method, parameters: parameters) { (result, error) in
+//            print(result!)
+            
+            if let results = result as? [String:AnyObject] {
+                
+                completionHandlerForUserData(success: true, results: results, error: nil)
+                
+            } else {
+                completionHandlerForUserData(success: false, results: nil, error: error)
+            }
+        }
+    }
+    
     func taskForPOSTMethod(method: String, parameters: [String:AnyObject], jsonBody: String, completionHandlerForPOST: (result: AnyObject!, error: NSError?) -> Void) -> NSURLSessionDataTask {
         
         // build the URL, Configure the request
-        let request = NSMutableURLRequest(URL: otmURLFromParameters(parameters, withPathExtension: method))
+        let request = NSMutableURLRequest(URL: otmAuthURLFromParameters(parameters, withPathExtension: method))
         
         request.HTTPMethod = "POST"
         request.addValue("application/json", forHTTPHeaderField: "Accept")
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
         request.HTTPBody = jsonBody.dataUsingEncoding(NSUTF8StringEncoding)
-        request.timeoutInterval = NSTimeInterval(5)
+        request.timeoutInterval = NSTimeInterval(10)
         
 //        print("    ")
 //        print("request: \(request)")
@@ -278,7 +349,8 @@ class OTMClient : NSObject {
     func taskForGETMethod(method: String, parameters: [String:AnyObject], completionHandlerForGET: (result: AnyObject!, error: NSError?) -> Void) -> NSURLSessionDataTask {
         
         //  build the URL, Configure the request
-        let request = NSMutableURLRequest(URL: otmURLFromParameters(parameters, withPathExtension: method))
+        let request = NSMutableURLRequest(URL: otmAuthURLFromParameters(parameters, withPathExtension: method))
+//        request.timeoutInterval = NSTimeInterval(10)
         
         // make the request
         let task = session.dataTaskWithRequest(request) { (data, response, error) in
@@ -320,7 +392,8 @@ class OTMClient : NSObject {
     func taskForDELETEMethod(method: String, parameters: [String:AnyObject], completionHandlerForDELETE: (result: AnyObject!, error: NSError?) -> Void) -> NSURLSessionDataTask {
         
         // build the URL, Configure the request
-        let request = NSMutableURLRequest(URL: otmURLFromParameters(parameters, withPathExtension: method))
+        let request = NSMutableURLRequest(URL: otmAuthURLFromParameters(parameters, withPathExtension: method))
+//        request.timeoutInterval = NSTimeInterval(10)
         request.HTTPMethod = "DELETE"
         
         var xsrfCookie: NSHTTPCookie? = nil
@@ -376,12 +449,12 @@ class OTMClient : NSObject {
     }
     
     // create a URL from parameters
-    private func otmURLFromParameters(parameters: [String:AnyObject], withPathExtension: String? = nil) -> NSURL {
+    private func otmAuthURLFromParameters(parameters: [String:AnyObject], withPathExtension: String? = nil) -> NSURL {
         
         let components = NSURLComponents()
-        components.scheme = OTMClient.Constants.ApiScheme
-        components.host = OTMClient.Constants.ApiHost
-        components.path = OTMClient.Constants.ApiPath + (withPathExtension ?? "")
+        components.scheme = OTMClient.AuthConstants.ApiScheme
+        components.host = OTMClient.AuthConstants.ApiHost
+        components.path = OTMClient.AuthConstants.ApiPath + (withPathExtension ?? "")
         components.queryItems = [NSURLQueryItem]()
         
         for (key, value) in parameters {
@@ -393,7 +466,7 @@ class OTMClient : NSObject {
     }
     
     // given raw JSON, return a usable Foundation object
-    private func convertDataWithCompletionHandler(data: NSData, offset: Int, completionHandlerForConvertData: (result: AnyObject!, error: NSError?) -> Void) {
+    func convertDataWithCompletionHandler(data: NSData, offset: Int, completionHandlerForConvertData: (result: AnyObject!, error: NSError?) -> Void) {
         
         var parsedResult: AnyObject!
         do {

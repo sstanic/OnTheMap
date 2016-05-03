@@ -81,12 +81,7 @@ class LoginViewController: UIViewController, FBSDKLoginButtonDelegate {
         }
     }
     
-    // some initialization
-    private func initializeActivityIndicator() {
-        activityIndicator.activityIndicatorViewStyle = .WhiteLarge
-        activityIndicator.hidesWhenStopped = true
-    }
-    
+    // initialization
     private func initializeTextfields() {
         let textAttributes = [
             NSForegroundColorAttributeName : UIColor.whiteColor(),
@@ -109,9 +104,27 @@ class LoginViewController: UIViewController, FBSDKLoginButtonDelegate {
     private func initializeFacebook() {
         loginFacebookButton.delegate = self
         loginFacebookButton.loginBehavior = .Native
+        
+        if let cachedToken = FBSDKAccessToken.currentAccessToken() {
+            showActivityIndicator()
+            OTMClient.sharedInstance().authenticateWithFacebook(cachedToken.tokenString) { (success, bool) in
+                if success {
+                    self.openOnTheMap()
+                }
+                else {
+                    OTMClient.sharedInstance().logoutFromFacebook()
+                }
+                self.hideActivityIndicator()
+            }
+        }
     }
     
     // activity indicator
+    private func initializeActivityIndicator() {
+        activityIndicator.activityIndicatorViewStyle = .WhiteLarge
+        activityIndicator.hidesWhenStopped = true
+    }
+    
     private func showActivityIndicator() {
         activityIndicator.startAnimating()
         view.userInteractionEnabled = false

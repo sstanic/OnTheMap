@@ -12,7 +12,6 @@ class TabViewController: UITabBarController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
     }
     
     @IBAction func logout(sender: AnyObject) {
@@ -25,12 +24,6 @@ class TabViewController: UITabBarController {
         else {
             
             OTMClient.sharedInstance().logoutFromUdacity() { (success, error) in
-                
-//                print("====")
-//                print("logout success. \(success)")
-//                print("session id: \(OTMClient.sharedInstance().sessionID!)")
-//                print("account key: \(OTMClient.sharedInstance().userID!)")
-//                print("  ")
                 
                 dispatch_async(dispatch_get_main_queue()) {
                     if success {
@@ -47,10 +40,6 @@ class TabViewController: UITabBarController {
     @IBAction func postInformation(sender: AnyObject) {
         let infoPostController = self.storyboard?.instantiateViewControllerWithIdentifier("informationPosting") as! InformationPostingViewController
         presentViewController(infoPostController, animated: true, completion: nil)
-    }
-    
-    @IBAction func refreshData(sender: AnyObject) {
-        // ....
     }
     
     private func showAlert(alertMessage: String) {

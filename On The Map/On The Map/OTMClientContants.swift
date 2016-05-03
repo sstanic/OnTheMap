@@ -9,7 +9,7 @@
 import Foundation
 
 extension OTMClient {
-    struct Constants {
+    struct AuthConstants {
 
         static let ApiKey : String = "..."
         
@@ -20,14 +20,14 @@ extension OTMClient {
     }
     
     // Methods
-    struct Methods {
+    struct AuthMethods {
 
         // Authentication
         static let AuthenticationSessionNew = "/session"
     }
     
     // MARK: Parameter Keys
-    struct ParameterKeys {
+    struct AuthParameterKeys {
 //        static let ApiKey = "api_key"
 //        static let SessionID = "id"
 //        static let RequestToken = "request_token"
@@ -37,7 +37,7 @@ extension OTMClient {
     }
     
     // MARK: JSON Body Keys
-    struct JSONBodyKeys {
+    struct AuthJSONBodyKeys {
 //        static let MediaType = "media_type"
 //        static let MediaID = "media_id"
 //        static let Favorite = "favorite"
@@ -45,7 +45,7 @@ extension OTMClient {
     }
     
     // MARK: JSON Response Keys
-    struct JSONResponseKeys {
+    struct AuthJSONResponseKeys {
         
 //        // General
 //        static let StatusMessage = "status_message"
@@ -59,6 +59,47 @@ extension OTMClient {
         static let SessionID = "id"
         
         // Account
-        static let UserID = "key"
+        static let UserKey = "key"
+    }
+    
+    struct UdacityUser {
+        static let User = "user"
+        static let FirstName = "first_name"
+        static let LastName = "last_name"
+        static let UnknownUser = "<unknown>"
+    }
+    
+    
+    struct DataConstants {
+        
+        static let AppID : String = "QrX47CA9cyuGewLdsL7o5Eb8iug6Em8ye0dnAbIr"
+        static let ApiKey : String = "QuWThTdiRmTux3YaDseUSEpUKo7aBYM737yKd4gY"
+        
+        // URLs
+        static let ApiScheme = "https"
+        static let ApiHost = "api.parse.com"
+        static let ApiPath = "/1/classes/StudentLocation"
+    }
+    
+    struct DataMethods {
+        
+        static let DataAccess = "/StudentLocation"
+    }
+    
+    struct DataParameterKeys {
+        
+        static let Limit = "limit"
+        static let Skip = "skip"
+        static let Order = "order"
+        static let Where = "where"
+    }
+    
+    struct DataJSONBodyKeys {
+        
+    }
+    
+    struct DataJSONResponseKeys {
+        
+        static let Results = "results"
     }
 }
