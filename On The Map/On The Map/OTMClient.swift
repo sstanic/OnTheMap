@@ -10,16 +10,15 @@ import Foundation
 
 class OTMClient : NSObject {
     
-    // shared session
+    //# MARK: Attributes
     var session = NSURLSession.sharedSession()
-    
-    // session data
     var sessionID: String? = nil
     var userKey: String? = nil
     var fbToken: String? = nil
     
-    var udacityStudent: UdacityStudent? = nil // app user
+    var localUser: LocalUser? = nil // app user
     
+    //# MARK: - Authentication
     func authenticateWithFacebook(token: String, completionHandlerForAuth: (success: Bool, error: NSError?) -> Void) {
         
         fbToken = token
@@ -43,14 +42,9 @@ class OTMClient : NSObject {
     }
     
     func logoutFromFacebook() {
+        
         let loginManager: FBSDKLoginManager = FBSDKLoginManager()
         loginManager.logOut()
-        
-//        let fbAccessToken = FBSDKAccessToken.currentAccessToken()
-//        print("--logout--")
-//        print("access token: \(fbAccessToken)")
-//        print("----")
-        
         self.fbToken = nil
     }
     
@@ -59,16 +53,6 @@ class OTMClient : NSObject {
         getUdacityAuthenticationResults(username, password: password) { (success, results, error) in
             
             if success {
-//                let session = results!["session"]
-//                let account = results!["account"]
-//                
-//                self.sessionID = session!["id"] as? String
-//                self.userID = account!["key"] as? String
-//                
-//                let reg = account!["registered"] as? Bool
-//                print("login request results: \(results!)")
-//                print("registered: \(reg)")
-                
                 self.saveLoginCredentials(results!) { (success, error) in
                     if success {
                         completionHandlerForAuth(success: true, error: nil)
@@ -116,52 +100,52 @@ class OTMClient : NSObject {
         requestUdacityUserName(self.userKey!) { (success, result, error) in
             
             if success {
-                self.udacityStudent = result!
+                self.localUser = result!
+                completionHandlerForSaveLoginCredentials(success: true, error: nil)
+
+            }
+            else {
+                completionHandlerForSaveLoginCredentials(success: false, error: error)
             }
             
-            completionHandlerForSaveLoginCredentials(success: true, error: nil)
-            
-            //        let reg = account["registered"] as? Bool
             print("login request results: \(results)")
-            //        print("registered: \(reg)")
         }
     }
     
-    func logoutFromUdacity(completionHandlerForLogout: (success: Bool, errorString: String?) -> Void) {
+    func logoutFromUdacity(completionHandlerForLogout: (success: Bool, error: NSError?) -> Void) {
         
-        getLogoutResults() { (success, results, errorString) in
-//            print("logout request results: \(results!)")
+        getLogoutResults() { (success, results, error) in
             
             self.sessionID = nil
             self.userKey = nil
-            self.udacityStudent = nil
+            self.localUser = nil
             
             if success {
-                completionHandlerForLogout(success: true, errorString: nil)
+                completionHandlerForLogout(success: true, error: nil)
             }
             else {
-                completionHandlerForLogout(success: false, errorString: errorString)
+                completionHandlerForLogout(success: false, error: error)
             }
         }
     }
     
-    func requestUdacityUserName(userID: String, completionHandlerForUdacityUserName: (success: Bool, result: UdacityStudent?, error: NSError?) -> Void) {
+    //# MARK: Udacity User Data
+    func requestUdacityUserName(userID: String, completionHandlerForUdacityUserName: (success: Bool, result: LocalUser?, error: NSError?) -> Void) {
 
         getUdacityUserData(userID) { (success, results, error) in
             
             if success {
                 if let user = results![UdacityUser.User] {
                     
-                    let firstName = user["first_name"] as? String ?? ""
-                    let lastName = user["last_name"] as? String ?? ""
-                    let uStudent = UdacityStudent(firstName: firstName, lastName: lastName)
+                    let firstName = user[UdacityUser.FirstName] as? String ?? ""
+                    let lastName = user[UdacityUser.LastName] as? String ?? ""
+                    let localUser = LocalUser(firstName: firstName, lastName: lastName)
                     
-                    //                    print("user: \(uStudent)")
-                    
-                    completionHandlerForUdacityUserName(success: true, result: uStudent, error: nil)
+                    completionHandlerForUdacityUserName(success: true, result: localUser, error: nil)
                 }
                 else {
-                    let userInfo = [NSLocalizedDescriptionKey : "Parameter '\(OTMClient.AuthJSONResponseKeys.UserKey)' not found in login-results."]
+                    let userInfo = [NSLocalizedDescriptionKey : "Parameter '\(UdacityUser.User)' not found in login-results."]
+                    print(userInfo)
                     completionHandlerForUdacityUserName(success: false, result: nil, error: NSError(domain: "requestUdacityUserName", code: 1, userInfo: userInfo))
                 }
             }
@@ -171,7 +155,8 @@ class OTMClient : NSObject {
         }
     }
 
-    private func getUdacityAuthenticationResults(username: String, password: String, completionHandlerForAuthentication: (success: Bool, results: [String:AnyObject]?, error: NSError?) -> Void) {
+    //# MARK: - URL Request Data Tasks Prep & Call
+    private func getUdacityAuthenticationResults(username: String, password: String, completionHandlerForUdacityAuthentication: (success: Bool, results: [String:AnyObject]?, error: NSError?) -> Void) {
         
         // specify parameters
         let parameters = [String:AnyObject]()
@@ -185,22 +170,22 @@ class OTMClient : NSObject {
             // check for errors and call the completion handler
             if let error = error {
                 print(error)
-                completionHandlerForAuthentication(success: false, results: nil, error: error)
+                completionHandlerForUdacityAuthentication(success: false, results: nil, error: error)
                 
             } else {
                 if let results = results as? [String:AnyObject] {
                     
-                    completionHandlerForAuthentication(success: true, results: results, error: nil)
+                    completionHandlerForUdacityAuthentication(success: true, results: results, error: nil)
                     
                 } else {
-                    print("Could not find \(OTMClient.AuthJSONResponseKeys.Session) in \(results)")
-                    completionHandlerForAuthentication(success: false, results: nil, error: error)
+                    let userInfo = [NSLocalizedDescriptionKey : OTMClient.ErrorMessage.HttpDataTaskFailed]
+                    completionHandlerForUdacityAuthentication(success: false, results: nil, error: NSError(domain: "getUdacityAuthenticationResults", code: 2, userInfo: userInfo))
                 }
             }
         }
     }
     
-    private func getFacebookAuthenticationResults(accessToken: String, completionHandlerForAuthentication: (success: Bool, results: [String:AnyObject]?, error: NSError?) -> Void) {
+    private func getFacebookAuthenticationResults(accessToken: String, completionHandlerForFacebookAuthentication: (success: Bool, results: [String:AnyObject]?, error: NSError?) -> Void) {
         
         // specify parameters
         let parameters = [String:AnyObject]()
@@ -214,22 +199,23 @@ class OTMClient : NSObject {
             // check for errors and call the completion handler
             if let error = error {
                 print(error)
-                completionHandlerForAuthentication(success: false, results: nil, error: error)
+                completionHandlerForFacebookAuthentication(success: false, results: nil, error: error)
                 
             } else {
                 if let results = results as? [String:AnyObject] {
                     
-                    completionHandlerForAuthentication(success: true, results: results, error: nil)
+                    completionHandlerForFacebookAuthentication(success: true, results: results, error: nil)
                     
-                } else {
-                    print("Could not find \(OTMClient.AuthJSONResponseKeys.Session) in \(results)")
-                    completionHandlerForAuthentication(success: false, results: nil, error: error)
+                }
+                else {
+                    let userInfo = [NSLocalizedDescriptionKey : OTMClient.ErrorMessage.HttpDataTaskFailed]
+                    completionHandlerForFacebookAuthentication(success: false, results: nil, error: NSError(domain: "getFacebookAuthenticationResults", code: 2, userInfo: userInfo))
                 }
             }
         }
     }
     
-    private func getLogoutResults(completionHandlerForLogout: (success: Bool, results: [String:AnyObject]?, errorString: String?) -> Void) {
+    private func getLogoutResults(completionHandlerForLogout: (success: Bool, results: [String:AnyObject]?, error: NSError?) -> Void) {
         
         // specify parameters
         let parameters = [String:AnyObject]()
@@ -237,26 +223,24 @@ class OTMClient : NSObject {
         // make the request
         taskForDELETEMethod(AuthMethods.AuthenticationSessionNew, parameters: parameters) { (results, error) in
             
-            // check for errors and call the completion handler            
             if let error = error {
                 print(error)
-                completionHandlerForLogout(success: false, results: nil, errorString: "Logout Failed.")
+                completionHandlerForLogout(success: false, results: nil, error: error)
                 
-            } else {
+            }
+            else {
                 if let results = results as? [String:AnyObject] {
-                    
-                    completionHandlerForLogout(success: true, results: results, errorString: nil)
+                    completionHandlerForLogout(success: true, results: results, error: nil)
                     
                 } else {
-                    completionHandlerForLogout(success: false, results: nil, errorString: "Logout Failed.")
+                    let userInfo = [NSLocalizedDescriptionKey : OTMClient.ErrorMessage.HttpDataTaskFailed]
+                    completionHandlerForLogout(success: false, results: nil, error: NSError(domain: "getLogoutResults", code: 2, userInfo: userInfo))
                 }
             }
         }
     }
     
-    func getUdacityUserData(userId: String, completionHandlerForUserData: (success: Bool, results: [String:AnyObject]?, error: NSError?) -> Void) {
-        
-//        print("get udacity user data. User id: \(userId)")
+    private func getUdacityUserData(userId: String, completionHandlerForUserData: (success: Bool, results: [String:AnyObject]?, error: NSError?) -> Void) {
         
         // specify parameters
         let parameters = [String:AnyObject]()
@@ -264,19 +248,25 @@ class OTMClient : NSObject {
         
         // make the request
         taskForGETMethod(method, parameters: parameters) { (result, error) in
-//            print(result!)
             
-            if let results = result as? [String:AnyObject] {
-                
-                completionHandlerForUserData(success: true, results: results, error: nil)
-                
-            } else {
+            if let error = error {
+                print(error)
                 completionHandlerForUserData(success: false, results: nil, error: error)
+            }
+            else {
+                if let results = result as? [String:AnyObject] {
+                    completionHandlerForUserData(success: true, results: results, error: nil)
+                }
+                else {
+                    let userInfo = [NSLocalizedDescriptionKey : OTMClient.ErrorMessage.HttpDataTaskFailed]
+                    completionHandlerForUserData(success: false, results: nil, error: NSError(domain: "getUdacityUserData", code: 2, userInfo: userInfo))
+                }
             }
         }
     }
     
-    func taskForPOSTMethod(method: String, parameters: [String:AnyObject], jsonBody: String, completionHandlerForPOST: (result: AnyObject!, error: NSError?) -> Void) -> NSURLSessionDataTask {
+    //# MARK: - URL Request Data Tasks
+    private func taskForPOSTMethod(method: String, parameters: [String:AnyObject], jsonBody: String, completionHandlerForPOST: (result: AnyObject!, error: NSError?) -> Void) -> NSURLSessionDataTask {
         
         // build the URL, Configure the request
         let request = NSMutableURLRequest(URL: otmAuthURLFromParameters(parameters, withPathExtension: method))
@@ -287,51 +277,42 @@ class OTMClient : NSObject {
         request.HTTPBody = jsonBody.dataUsingEncoding(NSUTF8StringEncoding)
         request.timeoutInterval = NSTimeInterval(10)
         
-//        print("    ")
-//        print("request: \(request)")
-//        print("    ")
-//        print("request body: \(jsonBody)")
-//        print("    ")
-        
         // make the request
         let task = session.dataTaskWithRequest(request) { (data, response, error) in
             
-            func sendError(error: String) {
-                print(error)
-                let userInfo = [NSLocalizedDescriptionKey : error]
+            func sendError(error: NSError?, localError: String) {
+                print(error, localError)
+                let userInfo = [NSLocalizedDescriptionKey : localError]
                 completionHandlerForPOST(result: nil, error: NSError(domain: "taskForPOSTMethod", code: 1, userInfo: userInfo))
             }
             
-            // check for specific error first
+            // check for errors
             if let error = error {
                 if error.code == NSURLErrorTimedOut {
-                    sendError(String(NSURLErrorTimedOut))
+                    sendError(error, localError: OTMClient.ErrorMessage.NetworkTimeout)
                     return
                 }
             }
-            
-            // guard: Was there another error?
+
             guard (error == nil) else {
-                sendError("There was an error with your request: \(error)")
+                sendError(error, localError: OTMClient.ErrorMessage.GeneralHttpRequestError.stringByAppendingString("\(error)"))
                 return
             }
-            
-            // guard: Was there any data returned?
+
             guard let data = data else {
-                sendError("No data was returned by the request!")
+                sendError(error, localError: OTMClient.ErrorMessage.NoDataFoundInRequest)
                 return
             }
             
-            // check for 40x errors
+            // check HTTP status codes (40x errors and 2XX response)
             if let statusCode = (response as? NSHTTPURLResponse)?.statusCode {
                 if statusCode == 400 || statusCode == 401 || statusCode == 403 {
-                    sendError(String(statusCode))
+                    sendError(error, localError: String(statusCode))
                     return
                 }
                 
-                // check: Did we get a successful 2XX response?
                 if statusCode < 200 || statusCode > 299 {
-                    sendError("Your request returned a status code other than 2xx! (\(statusCode)")
+                    sendError(error, localError: OTMClient.ErrorMessage.StatusCodeFailure)
                     return
                 }
             }
@@ -346,36 +327,40 @@ class OTMClient : NSObject {
         return task
     }
     
-    func taskForGETMethod(method: String, parameters: [String:AnyObject], completionHandlerForGET: (result: AnyObject!, error: NSError?) -> Void) -> NSURLSessionDataTask {
+    private func taskForGETMethod(method: String, parameters: [String:AnyObject], completionHandlerForGET: (result: AnyObject!, error: NSError?) -> Void) -> NSURLSessionDataTask {
         
         //  build the URL, Configure the request
         let request = NSMutableURLRequest(URL: otmAuthURLFromParameters(parameters, withPathExtension: method))
-//        request.timeoutInterval = NSTimeInterval(10)
         
         // make the request
         let task = session.dataTaskWithRequest(request) { (data, response, error) in
             
-            func sendError(error: String) {
-                print(error)
-                let userInfo = [NSLocalizedDescriptionKey : error]
+            func sendError(error: NSError?, localError: String) {
+                print(error, localError)
+                let userInfo = [NSLocalizedDescriptionKey : localError]
                 completionHandlerForGET(result: nil, error: NSError(domain: "taskForGETMethod", code: 1, userInfo: userInfo))
             }
             
-            // guard: Was there an error?
+            // check for errors
+            if let error = error {
+                if error.code == NSURLErrorTimedOut {
+                    sendError(error, localError: OTMClient.ErrorMessage.NetworkTimeout)
+                    return
+                }
+            }
+            
             guard (error == nil) else {
-                sendError("There was an error with your request: \(error)")
+                sendError(error, localError: OTMClient.ErrorMessage.GeneralHttpRequestError.stringByAppendingString("\(error)"))
                 return
             }
             
-            // guard: Did we get a successful 2XX response?
             guard let statusCode = (response as? NSHTTPURLResponse)?.statusCode where statusCode >= 200 && statusCode <= 299 else {
-                sendError("Your request returned a status code other than 2xx!")
+                sendError(error, localError: OTMClient.ErrorMessage.StatusCodeFailure)
                 return
             }
             
-            // guard: Was there any data returned?
             guard let data = data else {
-                sendError("No data was returned by the request!")
+                sendError(error, localError: OTMClient.ErrorMessage.NoDataFoundInRequest)
                 return
             }
             
@@ -389,11 +374,11 @@ class OTMClient : NSObject {
         return task
     }
     
-    func taskForDELETEMethod(method: String, parameters: [String:AnyObject], completionHandlerForDELETE: (result: AnyObject!, error: NSError?) -> Void) -> NSURLSessionDataTask {
+    private func taskForDELETEMethod(method: String, parameters: [String:AnyObject], completionHandlerForDELETE: (result: AnyObject!, error: NSError?) -> Void) -> NSURLSessionDataTask {
         
         // build the URL, Configure the request
         let request = NSMutableURLRequest(URL: otmAuthURLFromParameters(parameters, withPathExtension: method))
-//        request.timeoutInterval = NSTimeInterval(10)
+
         request.HTTPMethod = "DELETE"
         
         var xsrfCookie: NSHTTPCookie? = nil
@@ -404,37 +389,36 @@ class OTMClient : NSObject {
         if let xsrfCookie = xsrfCookie {
             request.setValue(xsrfCookie.value, forHTTPHeaderField: "X-XSRF-TOKEN")
         }
-//        
-//        print("    ")
-//        print("cookie: \(xsrfCookie)")
-//        print("    ")
-//        print("request: \(request)")
-//        print("    ")
         
         // make the request
         let task = session.dataTaskWithRequest(request) { (data, response, error) in
             
-            func sendError(error: String) {
-                print(error)
-                let userInfo = [NSLocalizedDescriptionKey : error]
+            func sendError(error: NSError?, localError: String) {
+                print(error, localError)
+                let userInfo = [NSLocalizedDescriptionKey : localError]
                 completionHandlerForDELETE(result: nil, error: NSError(domain: "taskForDELETEMethod", code: 1, userInfo: userInfo))
             }
             
-            // guard: Was there an error?
+            // check for errors
+            if let error = error {
+                if error.code == NSURLErrorTimedOut {
+                    sendError(error, localError: OTMClient.ErrorMessage.NetworkTimeout)
+                    return
+                }
+            }
+
             guard (error == nil) else {
-                sendError("There was an error with your request: \(error)")
+                sendError(error, localError: OTMClient.ErrorMessage.GeneralHttpRequestError.stringByAppendingString("\(error)"))
                 return
             }
             
-            // guard: Did we get a successful 2XX response?
             guard let statusCode = (response as? NSHTTPURLResponse)?.statusCode where statusCode >= 200 && statusCode <= 299 else {
-                sendError("Your request returned a status code other than 2xx!")
+                sendError(error, localError: OTMClient.ErrorMessage.StatusCodeFailure)
                 return
             }
             
-            // guard: Was there any data returned?
             guard let data = data else {
-                sendError("No data was returned by the request!")
+                sendError(error, localError: OTMClient.ErrorMessage.NoDataFoundInRequest)
                 return
             }
             
@@ -448,7 +432,7 @@ class OTMClient : NSObject {
         return task
     }
     
-    // create a URL from parameters
+    //# MARK: - URL Creation
     private func otmAuthURLFromParameters(parameters: [String:AnyObject], withPathExtension: String? = nil) -> NSURL {
         
         let components = NSURLComponents()
@@ -465,7 +449,7 @@ class OTMClient : NSObject {
         return components.URL!
     }
     
-    // given raw JSON, return a usable Foundation object
+    //# MARK: JSON conversion
     func convertDataWithCompletionHandler(data: NSData, offset: Int, completionHandlerForConvertData: (result: AnyObject!, error: NSError?) -> Void) {
         
         var parsedResult: AnyObject!
@@ -473,14 +457,16 @@ class OTMClient : NSObject {
             let newData = data.subdataWithRange(NSMakeRange(offset, data.length - offset))
             parsedResult = try NSJSONSerialization.JSONObjectWithData(newData, options: .AllowFragments)
         } catch {
-            let userInfo = [NSLocalizedDescriptionKey : "Could not parse the data as JSON: '\(data)'"]
+            let userInfo = [NSLocalizedDescriptionKey : OTMClient.ErrorMessage.JsonParseError.stringByAppendingString("\(data)")]
             completionHandlerForConvertData(result: nil, error: NSError(domain: "convertDataWithCompletionHandler", code: 1, userInfo: userInfo))
         }
         
         completionHandlerForConvertData(result: parsedResult, error: nil)
     }
     
+    //# Shared Instance
     class func sharedInstance() -> OTMClient {
+        
         struct Singleton {
             static var sharedInstance = OTMClient()
         }

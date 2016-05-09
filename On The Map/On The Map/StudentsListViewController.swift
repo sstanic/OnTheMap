@@ -10,118 +10,94 @@ import UIKit
 
 class StudentsListViewController: UITableViewController {
     
+    //# MARK: Outlets
     @IBOutlet var studentsTableView: UITableView!
     
-    weak var activityIndicatorView: UIActivityIndicatorView!
-    let cellIdentifier = "studentTableCell"
-    var refreshButton: UIBarButtonItem? = nil
+    //# MARK: Attributes
+    weak var activityIndicator: UIActivityIndicatorView!
+    let cellIdentifier = "studentTableViewCell"
     
-    var students = [StudentInformation]()
-    var queryCounter = 0
+    var observeDataStore = false {
+        didSet {            
+            if observeDataStore {
+                DataStore.sharedInstance().addObserver(self, forKeyPath: Utils.OberserverKeyIsLoading, options: .New, context: nil)
+                DataStore.sharedInstance().addObserver(self, forKeyPath: Utils.OberserverKeyIsLoadingUdacityUser, options: .New, context: nil)
+            }
+        }
+    }
     
+    //# MARK: Overrides
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        refreshButton = UIBarButtonItem(barButtonSystemItem: .Refresh, target: self, action: #selector(loadData))
-        parentViewController!.navigationItem.rightBarButtonItem = refreshButton
+        initializeAcitivityIndicator()
         
-        let activityIndicatorView = UIActivityIndicatorView(activityIndicatorStyle: UIActivityIndicatorViewStyle.Gray)
-        tableView.backgroundView = activityIndicatorView
-        tableView.separatorStyle = UITableViewCellSeparatorStyle.None
-        self.activityIndicatorView = activityIndicatorView
-        tableView.registerClass(UITableViewCell.self, forCellReuseIdentifier: cellIdentifier)
-        
-        loadData()
+        observeDataStore = true
     }
     
-    override func viewWillAppear(animated: Bool) {
-        super.viewWillAppear(true)
+    override func observeValueForKeyPath(keyPath: String?, ofObject object: AnyObject?, change: [String : AnyObject]?, context: UnsafeMutablePointer<Void>) {
         
-        // seperators not visible without setting them in code
-        self.tableView.separatorStyle = UITableViewCellSeparatorStyle.None;
-        self.tableView.separatorStyle = UITableViewCellSeparatorStyle.SingleLine;
-    }
-    
-    @objc private func loadData() {
-        self.refreshButton!.enabled = false
-        self.students = [StudentInformation]()
-        self.studentsTableView.reloadData()
-        
-        OTMClient.sharedInstance().getStudentLocations() { (success, results, error) in
+        if keyPath == Utils.OberserverKeyIsLoading {
             
-            dispatch_async(dispatch_get_main_queue()) {
-                if success {
-                    self.students = results!
-                    self.studentsTableView.reloadData()
-                }
-                else {
-                    self.activityIndicatorView.stopAnimating()
-                    let userInfo = error!.userInfo[NSLocalizedDescriptionKey] as! String
-                    self.showAlert(userInfo)
-                }
-                
-                self.loadUdacityUserNames()
-            }
-        }
-    }
-    
-    private func loadUdacityUserNames() {
-        queryCounter = students.count
-        
-        for (index, var s) in students.enumerate() {
-            OTMClient.sharedInstance().requestUdacityUserName(s.uniqueKey) { (success, result, error) in
-                if success {
-                    // only change user name if Udacity sent it back
-                    if let res = result {
-//                        print("result name: \(res)")
-                        
-                        if res.name != OTMClient.UdacityUser.UnknownUser {
-                            
-                            s.firstName = res.firstName!
-                            s.lastName = res.lastName!
-                            
-                            self.students[index] = s
-                        }
-                    }
-                }
-                
-                self.queryCounter = self.queryCounter - 1
-                print(self.queryCounter)
-                
-                dispatch_async(dispatch_get_main_queue()) {
-                    self.studentsTableView.reloadData()
-                    self.activityIndicatorView.stopAnimating()
-                    
-                    if (self.queryCounter <= 0) {
-                        self.refreshButton!.enabled = true
-                        print("refresh button re-enabled.")
+            // show or hide the activity indicator dependent of the value
+            dispatch_async(Utils.GlobalMainQueue) {
+                if let val = change!["new"] as! Int? {
+                    if val == 0 {
+                        Utils.hideActivityIndicator(self.view, activityIndicator: self.activityIndicator)
                     }
                     else {
-                        self.refreshButton!.enabled = false
+                        Utils.showActivityIndicator(self.view, activityIndicator: self.activityIndicator)
+                    }
+                }
+                
+                self.studentsTableView.reloadData()
+            }
+        }
+        
+        if keyPath == Utils.OberserverKeyIsLoadingUdacityUser {
+            
+            // show or hide the activity indicator dependent of the value
+            dispatch_async(Utils.GlobalMainQueue) {
+                if let val = change!["new"] as! Int? {
+                    if val == 0 {
+                        self.studentsTableView.reloadData()
+                    }
+                    else {
+                        // nothing to do here
                     }
                 }
             }
         }
     }
     
-    private func showAlert(alertMessage: String) {
-        let alertController = UIAlertController(title: "Info", message: alertMessage, preferredStyle: UIAlertControllerStyle.Alert)
-        let action = UIAlertAction(title: "OK", style: .Default) { (action:UIAlertAction!) in
+    deinit {
+        if observeDataStore {
+            DataStore.sharedInstance().removeObserver(self, forKeyPath: Utils.OberserverKeyIsLoading)
+            DataStore.sharedInstance().removeObserver(self, forKeyPath: Utils.OberserverKeyIsLoadingUdacityUser)
         }
-        alertController.addAction(action)
-        
-        presentViewController(alertController, animated: true, completion: nil)
     }
-}
-
-
-extension StudentsListViewController {
     
+    //# MARK: - Initialize
+    private func initializeAcitivityIndicator() {
+        
+        let activityIndicator = UIActivityIndicatorView(activityIndicatorStyle: UIActivityIndicatorViewStyle.WhiteLarge)
+        activityIndicator.color = UIColor.darkGrayColor()
+        
+        // seperators not visible without setting them in code
+        tableView.separatorStyle = UITableViewCellSeparatorStyle.SingleLine;
+        
+        tableView.backgroundView = activityIndicator
+        
+        self.activityIndicator = activityIndicator
+    }
+    
+    //# MARK: TableView
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
 
-        let cell = tableView.dequeueReusableCellWithIdentifier("studentTableViewCell", forIndexPath: indexPath) as! CustomStudentsListTableViewCell
+        let cell = tableView.dequeueReusableCellWithIdentifier(cellIdentifier, forIndexPath: indexPath) as! CustomStudentsListTableViewCell
         
-        let studentLocation = students[indexPath.row]
+        let studentLocation = DataStore.sharedInstance().studentInformationList![indexPath.row]
+        
         cell.studentNameTextField.text = studentLocation.firstName.stringByAppendingString(" ").stringByAppendingString(studentLocation.lastName)
         cell.studentMediaURLTextField.text = studentLocation.mediaURL
         
@@ -129,12 +105,13 @@ extension StudentsListViewController {
     }
     
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return students.count
+        
+        return DataStore.sharedInstance().studentInformationList!.count
     }
     
     override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         
-        let studentInformation = students[indexPath.row]
+        let studentInformation = DataStore.sharedInstance().studentInformationList![indexPath.row]
         
         if let url = NSURL(string: studentInformation.mediaURL) {
             UIApplication.sharedApplication().openURL(url)
@@ -142,10 +119,16 @@ extension StudentsListViewController {
     }
     
     override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
+        
         return 66
     }
     
     override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
-        return (students.count == 0) ? 0 : 1
+        
+        guard (DataStore.sharedInstance().studentInformationList) != nil else {
+            return 0
+        }
+        
+        return (DataStore.sharedInstance().studentInformationList!.count == 0) ? 0 : 1
     }
 }

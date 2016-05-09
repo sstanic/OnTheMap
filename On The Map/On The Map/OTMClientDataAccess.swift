@@ -10,22 +10,25 @@ import Foundation
 
 extension OTMClient {
     
+    //# MARK: Data Access StudentLocation
     func getStudentLocations(completionHandlerForGet: (success: Bool, results: [StudentInformation]?, error: NSError?) -> Void) {
         
-        getDataAccessGetResults(100) { (success, results, error) in
+        getDataAccessGetResults(OTMClient.DataConstants.StudentQueryLimit) { (success, results, error) in
             
             if success {
-//                print("student locations get result: \(results!)")
-//                print("////////")
-                
-                let resultList = results![DataJSONResponseKeys.Results] as! [[String:AnyObject]]
-                var sLoc = [StudentInformation]()
-                for r in resultList {
-                    let sl = StudentInformation(startValues: r)
-                    sLoc.append(sl)
+                if let resultList = results![DataJSONResponseKeys.Results] as? [[String:AnyObject]] {
+                    var sLoc = [StudentInformation]()
+                    for r in resultList {
+                        let sl = StudentInformation(startValues: r)
+                        sLoc.append(sl)
+                    }
+                    completionHandlerForGet(success: true, results: sLoc, error: nil)
                 }
-                
-                completionHandlerForGet(success: true, results: sLoc, error: nil)
+                else {
+                    let userInfo = [NSLocalizedDescriptionKey : "Parameter '\(DataJSONResponseKeys.Results)' not found in add-results."]
+                    print(userInfo)
+                    completionHandlerForGet(success: false, results: nil, error: NSError(domain: "getStudentLocations", code: 1, userInfo: userInfo))
+                }
             }
             else {
                 completionHandlerForGet(success: false, results: nil, error: error)
@@ -33,18 +36,22 @@ extension OTMClient {
         }
     }
     
-    func addStudentLocation(studentInformation: StudentInformation, completionHandlerForAdd: (success: Bool, error: NSError?) -> Void) {
+    func addStudentLocation(studentInformation: StudentInformation, completionHandlerForAdd: (success: Bool, objectId: String?, error: NSError?) -> Void) {
         
         getDataAccessPostResults(studentInformation) { (success, results, error) in
             
             if success {
-                
-                // .... do sth with the results
-                
-                completionHandlerForAdd(success: true, error: nil)
+                if let objectId = results![DataJSONResponseKeys.ObjectId] as? String {
+                    completionHandlerForAdd(success: true, objectId: objectId, error: nil)
+                }
+                else {
+                    let userInfo = [NSLocalizedDescriptionKey : "Parameter '\(DataJSONResponseKeys.ObjectId)' not found in add-results."]
+                    print(userInfo)
+                    completionHandlerForAdd(success: false, objectId: nil, error: NSError(domain: "addStudentLocation", code: 1, userInfo: userInfo))
+                }
             }
             else {
-                completionHandlerForAdd(success: false, error: error)
+                completionHandlerForAdd(success: false, objectId: nil, error: error)
             }
         }
     }
@@ -55,7 +62,7 @@ extension OTMClient {
             
             if success {
                 
-                // .... do sth with the results
+                // ignore <results>, not needed
                 
                 completionHandlerForUpdate(success: true, error: nil)
             }
@@ -70,31 +77,41 @@ extension OTMClient {
         getDataAccessQueryResults(uniqueKey) { (success, results, error) in
             
             if success {
-                print("student locations get result: \(results!)")
-                print("////////")
-                
-                let resultList = results![DataJSONResponseKeys.Results] as! [[String:AnyObject]]
-                var sLoc = [StudentInformation]()
-                for r in resultList {
-                    let sl = StudentInformation(startValues: r)
-                    sLoc.append(sl)
+                if let resultList = results![DataJSONResponseKeys.Results] as? [[String:AnyObject]] {
+                    var sLoc = [StudentInformation]()
+                    for r in resultList {
+                        let sl = StudentInformation(startValues: r)
+                        sLoc.append(sl)
+                    }
+                    
+                    if sLoc.count > 0 {
+                        completionHandlerForQuery(success: true, studentInformation: sLoc.first, error: nil)
+                    }
+                    else {
+                        let userInfo = [NSLocalizedDescriptionKey : "User not found for unique key: \(uniqueKey)"]
+                        print(userInfo)
+                        completionHandlerForQuery(success: false, studentInformation: nil, error: NSError(domain: "queryStudentLocation", code: 2, userInfo: userInfo))
+                    }
                 }
-                
-                completionHandlerForQuery(success: true, studentInformation: sLoc.first, error: nil)
+                else {
+                    let userInfo = [NSLocalizedDescriptionKey : "Parameter '\(DataJSONResponseKeys.Results)' not found in query-results."]
+                    print(userInfo)
+                    completionHandlerForQuery(success: false, studentInformation: nil, error: NSError(domain: "queryStudentLocation", code: 1, userInfo: userInfo))
+                }
             }
             else {
                 completionHandlerForQuery(success: false, studentInformation: nil, error: error)
             }
-
         }
     }
     
+    //# MARK: - URL Request Data Tasks Prep & Call
     private func getDataAccessGetResults(limit: Int, completionHandlerForGetResults: (success: Bool, results: [String:AnyObject]?, error: NSError?) -> Void) {
         
         // specify parameters
         var parameters = [String:AnyObject]()
         parameters[DataParameterKeys.Limit] = limit
-        parameters[DataParameterKeys.Order] = "-updatedAt"
+        parameters[DataParameterKeys.Order] = DataParameterKeys.OrderArg
         
         // make the request
         taskForDataGETMethod(parameters) { (results, error) in
@@ -104,14 +121,15 @@ extension OTMClient {
                 print(error)
                 completionHandlerForGetResults(success: false, results: nil, error: error)
                 
-            } else {
+            }
+            else {
                 if let results = results as? [String:AnyObject] {
-                    
                     completionHandlerForGetResults(success: true, results: results, error: nil)
-                    
-                } else {
-                    print("Could not find \(OTMClient.AuthJSONResponseKeys.Session) in \(results)")
-                    completionHandlerForGetResults(success: false, results: nil, error: error)
+                }
+                else {
+                    let userInfo = [NSLocalizedDescriptionKey : OTMClient.ErrorMessage.HttpDataTaskFailed]
+                    completionHandlerForGetResults(success: false, results: nil, error: NSError(domain: "getDataAccessGetResults", code: 2, userInfo: userInfo))
+
                 }
             }
         }
@@ -131,20 +149,20 @@ extension OTMClient {
                 print(error)
                 completionHandlerForQueryResults(success: false, results: nil, error: error)
                 
-            } else {
+            }
+            else {
                 if let results = results as? [String:AnyObject] {
-                    
                     completionHandlerForQueryResults(success: true, results: results, error: nil)
-                    
-                } else {
-                    print("Could not find \(OTMClient.AuthJSONResponseKeys.Session) in \(results)")
-                    completionHandlerForQueryResults(success: false, results: nil, error: error)
+                }
+                else {
+                    let userInfo = [NSLocalizedDescriptionKey : OTMClient.ErrorMessage.HttpDataTaskFailed]
+                    completionHandlerForQueryResults(success: false, results: nil, error: NSError(domain: "getDataAccessQueryResults", code: 2, userInfo: userInfo))
                 }
             }
         }
     }
     
-    private func getDataAccessPostResults(studentInformation: StudentInformation, completionHandlerForPutResults: (success: Bool, results: [String:AnyObject]?, error: NSError?) -> Void) {
+    private func getDataAccessPostResults(studentInformation: StudentInformation, completionHandlerForPostResults: (success: Bool, results: [String:AnyObject]?, error: NSError?) -> Void) {
         
         let parameters = [String:AnyObject]()
         
@@ -164,16 +182,15 @@ extension OTMClient {
             // check for errors and call the completion handler
             if let error = error {
                 print(error)
-                completionHandlerForPutResults(success: false, results: nil, error: error)
-                
-            } else {
+                completionHandlerForPostResults(success: false, results: nil, error: error)
+            }
+            else {
                 if let results = results as? [String:AnyObject] {
-                    
-                    completionHandlerForPutResults(success: true, results: results, error: nil)
-                    
-                } else {
-                    print("Could not find \(OTMClient.AuthJSONResponseKeys.Session) in \(results)")
-                    completionHandlerForPutResults(success: false, results: nil, error: error)
+                    completionHandlerForPostResults(success: true, results: results, error: nil)
+                }
+                else {
+                    let userInfo = [NSLocalizedDescriptionKey : OTMClient.ErrorMessage.HttpDataTaskFailed]
+                    completionHandlerForPostResults(success: false, results: nil, error: NSError(domain: "getDataAccessPostResults", code: 2, userInfo: userInfo))
                 }
             }
         }
@@ -201,51 +218,58 @@ extension OTMClient {
             if let error = error {
                 print(error)
                 completionHandlerForPutResults(success: false, results: nil, error: error)
-                
-            } else {
+            }
+            else {
                 if let results = results as? [String:AnyObject] {
-                    
                     completionHandlerForPutResults(success: true, results: results, error: nil)
-                    
-                } else {
-                    print("Could not find \(OTMClient.AuthJSONResponseKeys.Session) in \(results)")
-                    completionHandlerForPutResults(success: false, results: nil, error: error)
+                }
+                else {
+                    let userInfo = [NSLocalizedDescriptionKey : OTMClient.ErrorMessage.HttpDataTaskFailed]
+                    completionHandlerForPutResults(success: false, results: nil, error: NSError(domain: "getDataAccessPutResults", code: 2, userInfo: userInfo))
                 }
             }
         }
     }
     
-    func taskForDataGETMethod(parameters: [String:AnyObject], completionHandlerForGET: (result: AnyObject!, error: NSError?) -> Void) -> NSURLSessionDataTask {
+    //# MARK: - URL Request Data Tasks
+    private func taskForDataGETMethod(parameters: [String:AnyObject], completionHandlerForGET: (result: AnyObject!, error: NSError?) -> Void) -> NSURLSessionDataTask {
         
         //  build the URL, Configure the request
         let request = NSMutableURLRequest(URL: otmDataURLFromParameters(parameters, withPathExtension: ""))
         request.addValue(DataConstants.AppID, forHTTPHeaderField: "X-Parse-Application-Id")
         request.addValue(DataConstants.ApiKey, forHTTPHeaderField: "X-Parse-REST-API-Key")
+        request.timeoutInterval = NSTimeInterval(OTMClient.DataConstants.Timeout)
         
         // make the request
         let task = session.dataTaskWithRequest(request) { (data, response, error) in
             
-            func sendError(error: String) {
-                print(error)
-                let userInfo = [NSLocalizedDescriptionKey : error]
+            func sendError(error: NSError?, localError: String) {
+                print(error, localError)
+                let userInfo = [NSLocalizedDescriptionKey : localError]
                 completionHandlerForGET(result: nil, error: NSError(domain: "taskForGETMethod", code: 1, userInfo: userInfo))
             }
             
-            // guard: Was there an error?
+            // check for errors
+            if let error = error {
+                if error.code == NSURLErrorTimedOut {
+                    sendError(error, localError: OTMClient.ErrorMessage.NetworkTimeout)
+                    return
+                }
+            }
+            
             guard (error == nil) else {
-                sendError("There was an error with your request: \(error)")
+                sendError(error, localError: OTMClient.ErrorMessage.GeneralHttpRequestError.stringByAppendingString("\(error)"))
                 return
             }
             
-            // guard: Did we get a successful 2XX response?
+            // check HTTP status codes (2XX response)
             guard let statusCode = (response as? NSHTTPURLResponse)?.statusCode where statusCode >= 200 && statusCode <= 299 else {
-                sendError("Your request returned a status code other than 2xx!")
+                sendError(error, localError: OTMClient.ErrorMessage.StatusCodeFailure)
                 return
             }
             
-            // guard: Was there any data returned?
             guard let data = data else {
-                sendError("No data was returned by the request!")
+                sendError(error, localError: OTMClient.ErrorMessage.NoDataFoundInRequest)
                 return
             }
             
@@ -259,7 +283,7 @@ extension OTMClient {
         return task
     }
     
-    func taskForDataPOSTMethod(parameters: [String:AnyObject], jsonBody: String, completionHandlerForPOST: (result: AnyObject!, error: NSError?) -> Void) -> NSURLSessionDataTask {
+    private func taskForDataPOSTMethod(parameters: [String:AnyObject], jsonBody: String, completionHandlerForPOST: (result: AnyObject!, error: NSError?) -> Void) -> NSURLSessionDataTask {
         
         //  build the URL, Configure the request
         let request = NSMutableURLRequest(URL: otmDataURLFromParameters(parameters, withPathExtension: ""))
@@ -268,32 +292,38 @@ extension OTMClient {
         request.addValue(DataConstants.ApiKey, forHTTPHeaderField: "X-Parse-REST-API-Key")
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
         request.HTTPBody = jsonBody.dataUsingEncoding(NSUTF8StringEncoding)
-        request.timeoutInterval = NSTimeInterval(5)
+        request.timeoutInterval = NSTimeInterval(DataConstants.Timeout)
         
         // make the request
         let task = session.dataTaskWithRequest(request) { (data, response, error) in
             
-            func sendError(error: String) {
-                print(error)
-                let userInfo = [NSLocalizedDescriptionKey : error]
+            func sendError(error: NSError?, localError: String) {
+                print(error, localError)
+                let userInfo = [NSLocalizedDescriptionKey : localError]
                 completionHandlerForPOST(result: nil, error: NSError(domain: "taskForPOSTMethod", code: 1, userInfo: userInfo))
             }
             
-            // guard: Was there an error?
+            // check for errors
+            if let error = error {
+                if error.code == NSURLErrorTimedOut {
+                    sendError(error, localError: OTMClient.ErrorMessage.NetworkTimeout)
+                    return
+                }
+            }
+            
             guard (error == nil) else {
-                sendError("There was an error with your request: \(error)")
+                sendError(error, localError: OTMClient.ErrorMessage.GeneralHttpRequestError.stringByAppendingString("\(error)"))
                 return
             }
             
-            // guard: Did we get a successful 2XX response?
+            // check HTTP status codes (2XX response)
             guard let statusCode = (response as? NSHTTPURLResponse)?.statusCode where statusCode >= 200 && statusCode <= 299 else {
-                sendError("Your request returned a status code other than 2xx!")
+                sendError(error, localError: OTMClient.ErrorMessage.StatusCodeFailure)
                 return
             }
             
-            // guard: Was there any data returned?
             guard let data = data else {
-                sendError("No data was returned by the request!")
+                sendError(error, localError: OTMClient.ErrorMessage.NoDataFoundInRequest)
                 return
             }
             
@@ -307,7 +337,7 @@ extension OTMClient {
         return task
     }
     
-    func taskForDataPUTMethod(method: String, parameters: [String:AnyObject], jsonBody: String, completionHandlerForPUT: (result: AnyObject!, error: NSError?) -> Void) -> NSURLSessionDataTask {
+    private func taskForDataPUTMethod(method: String, parameters: [String:AnyObject], jsonBody: String, completionHandlerForPUT: (result: AnyObject!, error: NSError?) -> Void) -> NSURLSessionDataTask {
         
         //  build the URL, Configure the request
         let request = NSMutableURLRequest(URL: otmDataURLFromParameters(parameters, withPathExtension: method))
@@ -316,32 +346,38 @@ extension OTMClient {
         request.addValue(DataConstants.ApiKey, forHTTPHeaderField: "X-Parse-REST-API-Key")
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
         request.HTTPBody = jsonBody.dataUsingEncoding(NSUTF8StringEncoding)
-        request.timeoutInterval = NSTimeInterval(5)
+        request.timeoutInterval = NSTimeInterval(DataConstants.Timeout)
         
         // make the request
         let task = session.dataTaskWithRequest(request) { (data, response, error) in
             
-            func sendError(error: String) {
-                print(error)
-                let userInfo = [NSLocalizedDescriptionKey : error]
+            func sendError(error: NSError?, localError: String) {
+                print(error, localError)
+                let userInfo = [NSLocalizedDescriptionKey : localError]
                 completionHandlerForPUT(result: nil, error: NSError(domain: "taskForPUTMethod", code: 1, userInfo: userInfo))
             }
             
-            // guard: Was there an error?
+            // check for errors
+            if let error = error {
+                if error.code == NSURLErrorTimedOut {
+                    sendError(error, localError: OTMClient.ErrorMessage.NetworkTimeout)
+                    return
+                }
+            }
+
             guard (error == nil) else {
-                sendError("There was an error with your request: \(error)")
+                sendError(error, localError: OTMClient.ErrorMessage.GeneralHttpRequestError.stringByAppendingString("\(error)"))
                 return
             }
             
-            // guard: Did we get a successful 2XX response?
+            // check HTTP status codes (2XX response)
             guard let statusCode = (response as? NSHTTPURLResponse)?.statusCode where statusCode >= 200 && statusCode <= 299 else {
-                sendError("Your request returned a status code other than 2xx!")
+                sendError(error, localError: OTMClient.ErrorMessage.StatusCodeFailure)
                 return
             }
             
-            // guard: Was there any data returned?
             guard let data = data else {
-                sendError("No data was returned by the request!")
+                sendError(error, localError: OTMClient.ErrorMessage.NoDataFoundInRequest)
                 return
             }
             
@@ -355,7 +391,7 @@ extension OTMClient {
         return task
     }
     
-    // create a URL from parameters
+    //# MARK: - URL Creation
     private func otmDataURLFromParameters(parameters: [String:AnyObject], withPathExtension: String? = nil) -> NSURL {
         
         let components = NSURLComponents()

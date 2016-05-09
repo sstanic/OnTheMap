@@ -7,11 +7,14 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		12132F2D1CD960520055513F /* DataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12132F2C1CD960520055513F /* DataStore.swift */; };
+		12132F2F1CDD6A660055513F /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12132F2E1CDD6A660055513F /* Utils.swift */; };
 		125487A91CD8038900566B24 /* CustomStudentsListTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 125487A81CD8038900566B24 /* CustomStudentsListTableViewCell.swift */; };
 		1257B3631CB87165007E5A56 /* StudentInformation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1257B3621CB87165007E5A56 /* StudentInformation.swift */; };
 		1257B3651CC565ED007E5A56 /* OTMClientDataAccess.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1257B3641CC565ED007E5A56 /* OTMClientDataAccess.swift */; };
 		1257B3671CC72C3F007E5A56 /* StudentInformationMapItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1257B3661CC72C3F007E5A56 /* StudentInformationMapItem.swift */; };
-		127523461CCEFAC7009CC306 /* UdacityStudent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 127523451CCEFAC7009CC306 /* UdacityStudent.swift */; };
+		127523461CCEFAC7009CC306 /* LocalUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 127523451CCEFAC7009CC306 /* LocalUser.swift */; };
+		128569AD1CE068EF004C978A /* comments in Resources */ = {isa = PBXBuildFile; fileRef = 128569AC1CE068EF004C978A /* comments */; };
 		12C396C51CACEAC100F566C4 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12C396C41CACEAC100F566C4 /* AppDelegate.swift */; };
 		12C396C71CACEAC100F566C4 /* TabViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12C396C61CACEAC100F566C4 /* TabViewController.swift */; };
 		12C396CA1CACEAC100F566C4 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 12C396C81CACEAC100F566C4 /* Main.storyboard */; };
@@ -21,7 +24,6 @@
 		12C396D91CAE4B2900F566C4 /* MapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12C396D81CAE4B2900F566C4 /* MapViewController.swift */; };
 		12C396DB1CAE4B4400F566C4 /* StudentsListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12C396DA1CAE4B4400F566C4 /* StudentsListViewController.swift */; };
 		12C396DD1CAF181200F566C4 /* external Resources in Resources */ = {isa = PBXBuildFile; fileRef = 12C396DC1CAF181200F566C4 /* external Resources */; };
-		12C396E51CAF287C00F566C4 /* NavigationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12C396E41CAF287C00F566C4 /* NavigationViewController.swift */; };
 		12C396E71CAF7D6A00F566C4 /* InformationPostingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12C396E61CAF7D6A00F566C4 /* InformationPostingViewController.swift */; };
 		12C396E91CB307A400F566C4 /* OTMClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12C396E81CB307A400F566C4 /* OTMClient.swift */; };
 		12C396EC1CB307DD00F566C4 /* OTMClientContants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12C396EB1CB307DD00F566C4 /* OTMClientContants.swift */; };
@@ -30,11 +32,14 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		12132F2C1CD960520055513F /* DataStore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DataStore.swift; sourceTree = "<group>"; };
+		12132F2E1CDD6A660055513F /* Utils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
 		125487A81CD8038900566B24 /* CustomStudentsListTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomStudentsListTableViewCell.swift; sourceTree = "<group>"; };
 		1257B3621CB87165007E5A56 /* StudentInformation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StudentInformation.swift; sourceTree = "<group>"; };
 		1257B3641CC565ED007E5A56 /* OTMClientDataAccess.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OTMClientDataAccess.swift; sourceTree = "<group>"; };
 		1257B3661CC72C3F007E5A56 /* StudentInformationMapItem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StudentInformationMapItem.swift; sourceTree = "<group>"; };
-		127523451CCEFAC7009CC306 /* UdacityStudent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UdacityStudent.swift; sourceTree = "<group>"; };
+		127523451CCEFAC7009CC306 /* LocalUser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocalUser.swift; sourceTree = "<group>"; };
+		128569AC1CE068EF004C978A /* comments */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = comments; sourceTree = "<group>"; };
 		12C396C11CACEAC100F566C4 /* On The Map.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "On The Map.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		12C396C41CACEAC100F566C4 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		12C396C61CACEAC100F566C4 /* TabViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabViewController.swift; sourceTree = "<group>"; };
@@ -46,7 +51,6 @@
 		12C396D81CAE4B2900F566C4 /* MapViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MapViewController.swift; sourceTree = "<group>"; };
 		12C396DA1CAE4B4400F566C4 /* StudentsListViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StudentsListViewController.swift; sourceTree = "<group>"; };
 		12C396DC1CAF181200F566C4 /* external Resources */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "external Resources"; sourceTree = "<group>"; };
-		12C396E41CAF287C00F566C4 /* NavigationViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NavigationViewController.swift; sourceTree = "<group>"; };
 		12C396E61CAF7D6A00F566C4 /* InformationPostingViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InformationPostingViewController.swift; sourceTree = "<group>"; };
 		12C396E81CB307A400F566C4 /* OTMClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OTMClient.swift; sourceTree = "<group>"; };
 		12C396EB1CB307DD00F566C4 /* OTMClientContants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OTMClientContants.swift; sourceTree = "<group>"; };
@@ -68,6 +72,23 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		12132F301CDE9FF60055513F /* Storyboards */ = {
+			isa = PBXGroup;
+			children = (
+				12C396C81CACEAC100F566C4 /* Main.storyboard */,
+				12C396CD1CACEAC100F566C4 /* LaunchScreen.storyboard */,
+			);
+			name = Storyboards;
+			sourceTree = "<group>";
+		};
+		12132F311CDEA0390055513F /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				12132F2E1CDD6A660055513F /* Utils.swift */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
 		125487A71CD8036300566B24 /* View */ = {
 			isa = PBXGroup;
 			children = (
@@ -79,7 +100,6 @@
 		1257B3601CB86FF5007E5A56 /* Controller */ = {
 			isa = PBXGroup;
 			children = (
-				12C396E41CAF287C00F566C4 /* NavigationViewController.swift */,
 				12C396C61CACEAC100F566C4 /* TabViewController.swift */,
 				12C396D61CAE4AE600F566C4 /* LoginViewController.swift */,
 				12C396D81CAE4B2900F566C4 /* MapViewController.swift */,
@@ -94,7 +114,8 @@
 			children = (
 				1257B3621CB87165007E5A56 /* StudentInformation.swift */,
 				1257B3661CC72C3F007E5A56 /* StudentInformationMapItem.swift */,
-				127523451CCEFAC7009CC306 /* UdacityStudent.swift */,
+				127523451CCEFAC7009CC306 /* LocalUser.swift */,
+				12132F2C1CD960520055513F /* DataStore.swift */,
 			);
 			name = Model;
 			sourceTree = "<group>";
@@ -119,16 +140,17 @@
 		12C396C31CACEAC100F566C4 /* On The Map */ = {
 			isa = PBXGroup;
 			children = (
-				125487A71CD8036300566B24 /* View */,
+				12C396DC1CAF181200F566C4 /* external Resources */,
+				128569AC1CE068EF004C978A /* comments */,
+				12132F301CDE9FF60055513F /* Storyboards */,
 				1257B3611CB87151007E5A56 /* Model */,
+				125487A71CD8036300566B24 /* View */,
 				1257B3601CB86FF5007E5A56 /* Controller */,
 				12C396EA1CB307B900F566C4 /* Client */,
+				12132F311CDEA0390055513F /* Supporting Files */,
 				12C396C41CACEAC100F566C4 /* AppDelegate.swift */,
-				12C396C81CACEAC100F566C4 /* Main.storyboard */,
 				12C396CB1CACEAC100F566C4 /* Assets.xcassets */,
-				12C396CD1CACEAC100F566C4 /* LaunchScreen.storyboard */,
 				12C396D01CACEAC100F566C4 /* Info.plist */,
-				12C396DC1CAF181200F566C4 /* external Resources */,
 			);
 			path = "On The Map";
 			sourceTree = "<group>";
@@ -215,6 +237,7 @@
 				12C396CF1CACEAC100F566C4 /* LaunchScreen.storyboard in Resources */,
 				12C396CC1CACEAC100F566C4 /* Assets.xcassets in Resources */,
 				12C396CA1CACEAC100F566C4 /* Main.storyboard in Resources */,
+				128569AD1CE068EF004C978A /* comments in Resources */,
 				12C396DD1CAF181200F566C4 /* external Resources in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -231,15 +254,16 @@
 				12C396D71CAE4AE600F566C4 /* LoginViewController.swift in Sources */,
 				12C396E91CB307A400F566C4 /* OTMClient.swift in Sources */,
 				1257B3671CC72C3F007E5A56 /* StudentInformationMapItem.swift in Sources */,
+				12132F2F1CDD6A660055513F /* Utils.swift in Sources */,
 				12C396E71CAF7D6A00F566C4 /* InformationPostingViewController.swift in Sources */,
 				12C396C71CACEAC100F566C4 /* TabViewController.swift in Sources */,
-				127523461CCEFAC7009CC306 /* UdacityStudent.swift in Sources */,
+				127523461CCEFAC7009CC306 /* LocalUser.swift in Sources */,
 				12C396EC1CB307DD00F566C4 /* OTMClientContants.swift in Sources */,
 				12C396C51CACEAC100F566C4 /* AppDelegate.swift in Sources */,
 				125487A91CD8038900566B24 /* CustomStudentsListTableViewCell.swift in Sources */,
 				12C396D91CAE4B2900F566C4 /* MapViewController.swift in Sources */,
 				1257B3631CB87165007E5A56 /* StudentInformation.swift in Sources */,
-				12C396E51CAF287C00F566C4 /* NavigationViewController.swift in Sources */,
+				12132F2D1CD960520055513F /* DataStore.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

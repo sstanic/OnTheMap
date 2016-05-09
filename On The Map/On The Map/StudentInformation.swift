@@ -9,6 +9,7 @@
 import Foundation
 
 struct StudentInformation {
+    
     var objectId: String
     var uniqueKey: String
     var firstName: String
@@ -22,7 +23,7 @@ struct StudentInformation {
     var acl: String
     
     init(startValues: [String:AnyObject]) {
-       
+        
         objectId = ""
         uniqueKey = ""
         firstName = ""
@@ -74,13 +75,14 @@ struct StudentInformation {
         if isAvailable("updatedAt", dict: startValues) {
             updatedAt = startValues["updatedAt"] as! String
         }
-
+        
         if isAvailable("acl", dict: startValues) {
             acl = startValues["acl"] as! String
         }
     }
     
     private func isAvailable(key: String, dict: [String:AnyObject]) -> Bool {
+        
         guard dict[key] != nil else {
             return false
         }

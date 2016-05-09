@@ -9,41 +9,73 @@
 import UIKit
 import MapKit
 
-class MapViewController: UIViewController {
+class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDelegate {
     
+    //# MARK: Outlets
     @IBOutlet weak var mapView: MKMapView!
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
     
+    //# MARK: Attributes
     var locationManager = CLLocationManager()
     let regionRadius: CLLocationDistance = 1000000
     var isMapInitialized = false
     
+    var observeDataStore = false {
+        didSet {            
+            if observeDataStore {
+                DataStore.sharedInstance().addObserver(self, forKeyPath: Utils.OberserverKeyIsLoading, options: .New, context: nil)
+            }
+        }
+    }
+    
+    //# MARK: Overrides
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        parentViewController!.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .Refresh, target: self, action: #selector(loadData))
-        
         initializeMapAndLocationManager()
-        initializeActivityIndicator()
-
-        loadData()
+        observeDataStore = true
     }
     
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(true)
         
         checkLocationAuthorizationStatus()
+        getData()
     }
-    
-    private func checkLocationAuthorizationStatus() {
-        if CLLocationManager.authorizationStatus() == .AuthorizedWhenInUse {
-            mapView.showsUserLocation = true
-        } else {
-            locationManager.requestWhenInUseAuthorization()
+
+    deinit {
+        if observeDataStore {
+            DataStore.sharedInstance().removeObserver(self, forKeyPath: Utils.OberserverKeyIsLoading)
         }
     }
     
+    override func observeValueForKeyPath(keyPath: String?, ofObject object: AnyObject?, change: [String : AnyObject]?, context: UnsafeMutablePointer<Void>) {
+
+        guard activityIndicator != nil else {
+            return
+        }
+        
+        if keyPath == Utils.OberserverKeyIsLoading {
+            
+            // show or hide the activity indicator dependent of the value
+            dispatch_async(Utils.GlobalMainQueue) {
+                if let val = change!["new"] as! Int? {
+                    if val == 0 {
+                        Utils.hideActivityIndicator(self.view, activityIndicator: self.activityIndicator)
+                    }
+                    else {
+                        Utils.showActivityIndicator(self.view, activityIndicator: self.activityIndicator)
+                    }
+                }
+            }
+            
+            self.getData()
+        }
+    }
+    
+    //# MARK: - Initialization
     private func initializeMapAndLocationManager() {
+        
         mapView.delegate = self
         
         if (CLLocationManager.locationServicesEnabled())
@@ -56,96 +88,73 @@ class MapViewController: UIViewController {
         }
     }
     
-    private func setCurrentLocation(location: CLLocation) {
-        let coordinateRegion = MKCoordinateRegionMakeWithDistance(location.coordinate, regionRadius * 2.0, regionRadius * 2.0)
-        mapView.setRegion(coordinateRegion, animated: true)
-    }
-    
-    @objc private func loadData() {
+    //# MARK: Data access
+    private func getData() {
         
-        showActivityIndicator()
-        OTMClient.sharedInstance().getStudentLocations() { (success, results, error) in
-            
-            dispatch_async(dispatch_get_main_queue()) {
-                self.hideActivityIndicator()
-                
-                if success {
-                    var mapItems = [StudentInformationMapItem]()
-                    for r in results! {
-                        
-                        // use name from parse data
-                        let name = r.firstName.stringByAppendingString(" ").stringByAppendingString(r.lastName)
-                        let mapItem = StudentInformationMapItem(uniqueKey: r.uniqueKey, name: name, mediaUrl: r.mediaURL, location: CLLocationCoordinate2D(latitude: r.latitude, longitude: r.longitude))
-                        
-                        // get udacity username
-                        mapItem.willChangeValueForKey("title")
-                        OTMClient.sharedInstance().requestUdacityUserName(r.uniqueKey) { (success, result, error) in
-                            if success {
-                                
-                                // only change user name if Udacity sent it back
-                                if result!.name != OTMClient.UdacityUser.UnknownUser {
-                                    mapItem.title = result!.name
-                                }
-                            }
-                            mapItem.didChangeValueForKey("title")
-                        }
-                        
-                        mapItems.append(mapItem)
-                    }
-                    
-                    // in case of a reload: keep it simple. Remove all available annotations and re-add them.
-                    self.mapView.removeAnnotations(self.mapView.annotations)
-                    self.mapView.addAnnotations(mapItems)
-                }
-                else {
-                    let userInfo = error!.userInfo[NSLocalizedDescriptionKey] as! String
-                    self.showAlert(userInfo)
+        dispatch_async(Utils.GlobalMainQueue) {
+            if DataStore.sharedInstance().isNotLoading {
+                if let students = DataStore.sharedInstance().studentInformationList {
+                    self.createMapItems(students)
                 }
             }
         }
     }
     
-    // activity indicator
-    private func initializeActivityIndicator() {
-        activityIndicator.activityIndicatorViewStyle = .WhiteLarge
-        activityIndicator.hidesWhenStopped = true
-    }
-    
-    private func showActivityIndicator() {
-        activityIndicator.startAnimating()
-        view.userInteractionEnabled = false
+    //# MARK: Location & Geocoding
+    private func checkLocationAuthorizationStatus() {
         
-        for subview in view.subviews {
-            subview.alpha = 0.3
-        }
-        
-        // do not 'hide' the activity indicator
-        activityIndicator.alpha = 1.0
-    }
-    
-    private func hideActivityIndicator() {
-        self.activityIndicator.stopAnimating()
-        view.userInteractionEnabled = true
-        
-        for subview in view.subviews {
-            subview.alpha = 1.0
+        if CLLocationManager.authorizationStatus() == .AuthorizedWhenInUse {
+            mapView.showsUserLocation = true
+        } else {
+            locationManager.requestWhenInUseAuthorization()
         }
     }
     
-    private func showAlert(alertMessage: String) {
-        let alertController = UIAlertController(title: "Info", message: alertMessage, preferredStyle: UIAlertControllerStyle.Alert)
-        let action = UIAlertAction(title: "OK", style: .Default) { (action:UIAlertAction!) in
-        }
-        alertController.addAction(action)
+    private func setCurrentLocation(location: CLLocation) {
         
-        presentViewController(alertController, animated: true, completion: nil)
+        let coordinateRegion = MKCoordinateRegionMakeWithDistance(location.coordinate, regionRadius * 2.0, regionRadius * 2.0)
+        mapView.setRegion(coordinateRegion, animated: true)
     }
-}
-
-
-extension MapViewController: MKMapViewDelegate {
     
+    private func createMapItems(results: [StudentInformation]) {
+        
+        var mapItems = [StudentInformationMapItem]()
+        
+        for r in results {
+            
+            // use name from parse data
+            let name = r.firstName.stringByAppendingString(" ").stringByAppendingString(r.lastName)
+            let mapItem = StudentInformationMapItem(uniqueKey: r.uniqueKey, name: name, mediaUrl: r.mediaURL, location: CLLocationCoordinate2D(latitude: r.latitude, longitude: r.longitude))
+            
+            // get udacity username
+            if Utils.LoadUserNamesFromUdacity {
+                mapItem.willChangeValueForKey("title")
+                
+                OTMClient.sharedInstance().requestUdacityUserName(r.uniqueKey) { (success, result, error) in
+                    if success {
+                        // only change user name if Udacity sent it back
+                        if result!.name != OTMClient.UdacityUser.UnknownUser {
+                            mapItem.title = result!.name
+                        }
+                    }
+                    // ignore failure - the udacity user name cannot be used
+                    
+                    mapItem.didChangeValueForKey("title")
+                }
+            }
+            
+            mapItems.append(mapItem)
+        }
+        
+        // in case of a reload: keep it simple. Remove all available annotations and re-add them.
+        self.mapView.removeAnnotations(self.mapView.annotations)
+        self.mapView.addAnnotations(mapItems)
+    }
+    
+    
+    //# MARK: - MKMapViewDelegate
     func mapView(mapView: MKMapView, viewForAnnotation annotation: MKAnnotation) -> MKAnnotationView? {
+        
         if let annotation = annotation as? StudentInformationMapItem {
             let identifier = "pin"
             var view: MKPinAnnotationView
@@ -168,18 +177,18 @@ extension MapViewController: MKMapViewDelegate {
     }
     
     func mapView(mapView: MKMapView, annotationView view: MKAnnotationView, calloutAccessoryControlTapped control: UIControl) {
+        
         if control == view.rightCalloutAccessoryView{
             if let url = view.annotation!.subtitle {
                 UIApplication.sharedApplication().openURL(NSURL(string: url!)!)
             }
         }
     }
-}
-
-
-extension MapViewController: CLLocationManagerDelegate {
     
+    
+    //# MARK: CLLocationManagerDelegate
     func locationManager(manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        
         if !isMapInitialized {
             setCurrentLocation(locations.last!)
             isMapInitialized = true

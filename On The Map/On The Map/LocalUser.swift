@@ -1,5 +1,5 @@
 //
-//  UdacityStudent.swift
+//  LocalUser.swift
 //  On The Map
 //
 //  Created by Sascha Stanic on 25.04.16.
@@ -8,11 +8,13 @@
 
 import Foundation
 
-struct UdacityStudent {
+struct LocalUser {
+    
     var firstName: String?
     var lastName: String?
     
     var name: String? {
+        
         let n = firstName!.stringByAppendingString(" ").stringByAppendingString(lastName!)
         
         if firstName!.isEmpty && lastName!.isEmpty {

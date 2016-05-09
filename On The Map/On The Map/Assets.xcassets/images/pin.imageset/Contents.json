@@ -2,17 +2,17 @@
   "images" : [
     {
       "idiom" : "universal",
-      "filename" : "map_25x25.png",
+      "filename" : "pin.png",
       "scale" : "1x"
     },
     {
       "idiom" : "universal",
-      "filename" : "map_50x50.png",
+      "filename" : "pin@2x.png",
       "scale" : "2x"
     },
     {
       "idiom" : "universal",
-      "filename" : "map_75x75.png",
+      "filename" : "pin@3x.png",
       "scale" : "3x"
     }
   ],

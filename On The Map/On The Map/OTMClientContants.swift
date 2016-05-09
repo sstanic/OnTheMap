@@ -9,47 +9,23 @@
 import Foundation
 
 extension OTMClient {
+    
+    //# MARK: Authentication
     struct AuthConstants {
-
-        static let ApiKey : String = "..."
         
-        // URLs
+        // URL
         static let ApiScheme = "https"
         static let ApiHost = "www.udacity.com"
         static let ApiPath = "/api"
     }
     
-    // Methods
     struct AuthMethods {
 
         // Authentication
         static let AuthenticationSessionNew = "/session"
     }
     
-    // MARK: Parameter Keys
-    struct AuthParameterKeys {
-//        static let ApiKey = "api_key"
-//        static let SessionID = "id"
-//        static let RequestToken = "request_token"
-//        static let Query = "query"
-        
-        
-    }
-    
-    // MARK: JSON Body Keys
-    struct AuthJSONBodyKeys {
-//        static let MediaType = "media_type"
-//        static let MediaID = "media_id"
-//        static let Favorite = "favorite"
-//        static let Watchlist = "watchlist"
-    }
-    
-    // MARK: JSON Response Keys
     struct AuthJSONResponseKeys {
-        
-//        // General
-//        static let StatusMessage = "status_message"
-//        static let StatusCode = "status_code"
         
         // Authorization
         static let RequestToken = "request_token"
@@ -62,23 +38,21 @@ extension OTMClient {
         static let UserKey = "key"
     }
     
-    struct UdacityUser {
-        static let User = "user"
-        static let FirstName = "first_name"
-        static let LastName = "last_name"
-        static let UnknownUser = "<unknown>"
-    }
-    
-    
+    //# MARK: Data Access
     struct DataConstants {
         
+        // App and Api Keys
         static let AppID : String = "QrX47CA9cyuGewLdsL7o5Eb8iug6Em8ye0dnAbIr"
         static let ApiKey : String = "QuWThTdiRmTux3YaDseUSEpUKo7aBYM737yKd4gY"
         
-        // URLs
+        // URL
         static let ApiScheme = "https"
         static let ApiHost = "api.parse.com"
         static let ApiPath = "/1/classes/StudentLocation"
+
+        static let StudentQueryLimit = 100
+        
+        static let Timeout = 10
     }
     
     struct DataMethods {
@@ -90,16 +64,33 @@ extension OTMClient {
         
         static let Limit = "limit"
         static let Skip = "skip"
-        static let Order = "order"
         static let Where = "where"
-    }
-    
-    struct DataJSONBodyKeys {
-        
+        static let Order = "order"
+        static let OrderArg = "-updatedAt"
     }
     
     struct DataJSONResponseKeys {
         
         static let Results = "results"
+        static let ObjectId = "objectId"
+    }
+    
+    //# MARK: Udacity User Data
+    struct UdacityUser {
+        
+        static let User = "user"
+        static let FirstName = "first_name"
+        static let LastName = "last_name"
+        static let UnknownUser = "<unknown>"
+    }
+    
+    struct ErrorMessage {
+        static let NetworkTimeout = "Network timeout. Please check your network connection."
+        static let GeneralHttpRequestError = "Http request error. Error message: "
+        static let StatusCodeFailure = "Your request returned a status code other than 2xx."
+        static let NoDataFoundInRequest = "No data was returned by the request."
+        static let JsonParseError = "Could not parse the data as JSON. Data: "
+        
+        static let HttpDataTaskFailed = "Http data task failed. Cannot convert result data."
     }
 }

@@ -16,6 +16,7 @@ class StudentInformationMapItem: NSObject, MKAnnotation {
     let coordinate: CLLocationCoordinate2D
     
     init(uniqueKey: String, name: String, mediaUrl: String, location: CLLocationCoordinate2D) {
+        
         self.uniqueKey = uniqueKey
         title = name
         subtitle = mediaUrl
@@ -25,6 +26,7 @@ class StudentInformationMapItem: NSObject, MKAnnotation {
     }
     
     var title: String? {
+        
         willSet { willChangeValueForKey("title") }
         didSet { didChangeValueForKey("title") }
     }
