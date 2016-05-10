@@ -258,7 +258,7 @@ extension OTMClient {
             }
             
             guard (error == nil) else {
-                sendError(error, localError: OTMClient.ErrorMessage.GeneralHttpRequestError.stringByAppendingString("\(error)"))
+                sendError(error, localError: OTMClient.ErrorMessage.GeneralHttpRequestError.stringByAppendingString("\(error?.localizedDescription != nil ? error?.localizedDescription : "[No description]")"))
                 return
             }
             
@@ -312,7 +312,7 @@ extension OTMClient {
             }
             
             guard (error == nil) else {
-                sendError(error, localError: OTMClient.ErrorMessage.GeneralHttpRequestError.stringByAppendingString("\(error)"))
+                sendError(error, localError: OTMClient.ErrorMessage.GeneralHttpRequestError.stringByAppendingString("\(error?.localizedDescription != nil ? error?.localizedDescription : "[No description]")"))
                 return
             }
             
@@ -366,7 +366,7 @@ extension OTMClient {
             }
 
             guard (error == nil) else {
-                sendError(error, localError: OTMClient.ErrorMessage.GeneralHttpRequestError.stringByAppendingString("\(error)"))
+                sendError(error, localError: OTMClient.ErrorMessage.GeneralHttpRequestError.stringByAppendingString("\(error?.localizedDescription != nil ? error?.localizedDescription : "[No description]")"))
                 return
             }
             

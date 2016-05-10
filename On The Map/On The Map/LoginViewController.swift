@@ -29,6 +29,7 @@ class LoginViewController: UIViewController, FBSDKLoginButtonDelegate {
         
         signUpStack.layer.borderWidth = 0
         
+        
         Utils.hideActivityIndicator(view, activityIndicator: activityIndicator)
         initializeTextfields()
         initializeFacebook()

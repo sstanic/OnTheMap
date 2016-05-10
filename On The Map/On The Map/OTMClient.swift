@@ -295,7 +295,7 @@ class OTMClient : NSObject {
             }
 
             guard (error == nil) else {
-                sendError(error, localError: OTMClient.ErrorMessage.GeneralHttpRequestError.stringByAppendingString("\(error)"))
+                sendError(error, localError: OTMClient.ErrorMessage.GeneralHttpRequestError.stringByAppendingString("\(error?.localizedDescription != nil ? error?.localizedDescription : "[No description]")"))
                 return
             }
 
@@ -350,7 +350,7 @@ class OTMClient : NSObject {
             }
             
             guard (error == nil) else {
-                sendError(error, localError: OTMClient.ErrorMessage.GeneralHttpRequestError.stringByAppendingString("\(error)"))
+                sendError(error, localError: OTMClient.ErrorMessage.GeneralHttpRequestError.stringByAppendingString("\(error?.localizedDescription != nil ? error?.localizedDescription : "[No description]")"))
                 return
             }
             
@@ -408,7 +408,7 @@ class OTMClient : NSObject {
             }
 
             guard (error == nil) else {
-                sendError(error, localError: OTMClient.ErrorMessage.GeneralHttpRequestError.stringByAppendingString("\(error)"))
+                sendError(error, localError: OTMClient.ErrorMessage.GeneralHttpRequestError.stringByAppendingString("\(error?.localizedDescription != nil ? error?.localizedDescription : "[No description]")"))
                 return
             }
             

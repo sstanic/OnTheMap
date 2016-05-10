@@ -1,28 +1,31 @@
-Here are some comments which I noted during learning and develoment:
+The comments are regarding the requirements of Udacity's iOS Nanodegree, project 3
+I noted the comments during learning and develoment.
 
-== Things that did not work out as expected
 
-- Spec: Add a sign-up link, but the provided link leads to the sing-in page
+== General
 
-- Rubric: "When the user taps a pin, it displays the pin annotation popup, with the student's name => (pulled from their Udacity profile) <= and the link associated with the student's pin
-  => This is misleading as it might specifiy to pull every student's name from Udacity after loading the data from the Parse server.
-     But Udacity only returns the first and last name for the logged-in account, so this does not make much sense (it does not make sense at all :] but is a good exercise for async data loading)
-
-- Facebooks information "You have already authorized..." after the login. This looks like a common problem to many developers, so I did not do a deeper investigation. There is for sure a simple solution.
+- Spec: Add a sign-up link: The provided link in the docs leads to the sing-in page, not to the sign-up page
+- Facebooks information "You have already authorized..." after the login. This looks like a common problem to many developers, so I did not do a deeper investigation. There is for sure a simple solution
+- I don't like the way how the information posting view is done. I'd prefer to create two sub-views that can be shown or hidden, instead of showing or hiding different parts of one view. This may be a topic for project 5 too, so I will have to deal with it later anyway.
+- Spec: "When the user taps a pin, it displays the pin annotation popup, with the student's name => (pulled from their Udacity profile) <= and the link associated with the student's pin
+  This is misleading as it might be understood to pull every student's name from Udacity after loading the data from the Parse server
 
 
 == What I did not do (by intention)
 - I did not reuse the POST for updates of StudentInformation (Http-PUT) as it gets more complicated -> no advantage
 - I did not test all possibilities of StudentInformation's property values set or not set or empty (e.g. it looks like Parse returns an error, if the last name is not set)
-- I added a minimum URI check with canOpenURL(...) to just check it. Check could be better, but I think it is enough for this project. If the URI is invalid nothing happens, there is no alert view.
-- I did not put all error string into constants
+- I added a minimum URI check with canOpenURL(...) to just check it. Check could be better, but I think it is enough for this project. If the URI is invalid nothing happens, there is no alert view (It is really annoying to get the same message over and over again. I'd prefer to check the URI before it is posted)
+- I did not put all error strings into constants
 - I did not check the case of getting multiple users from the Parse server for one uniqueKey. The first one in the list is chosen. The case of having more than one item returned, points to a bug in the app (or a badly designed DB)
-- I did not add a question for updating a user. If the user has already posted her/his location, the location and the media url is preset.
+- I did not add a question for updating a user. If the user has already posted her/his location, the current saved location and the media url is preset
+- The background of the FB-Button does not fit, if logged-in. I ignored it.
 
 
 == What I did do
-- I left some prints
-- I set the network timeout to 10s
+- I left some prints in the code
+- I set the network timeout to 10s. That is ok (most of the time) in tests with the Network Link Conditioner set to 'Very Bad Network' and still get all data loaded. The user does not have to wait too long to get the timeout message
+  See also: https://www.nngroup.com/articles/website-response-times/
+  Anyway this can be improved by asking the user, if the request should be stopped or continued
 
 
 == What I really missed (no requirements)
