@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="10116" systemVersion="15E65" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="gqS-WB-2vG">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="10117" systemVersion="15E65" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="gqS-WB-2vG">
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="10085"/>
@@ -80,12 +80,15 @@
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="QV1-zE-RaR" userLabel="inputView">
                                 <rect key="frame" x="0.0" y="229" width="600" height="295"/>
                                 <subviews>
-                                    <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="enter your place" textAlignment="center" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="IET-wd-Kag" userLabel="studyingText">
+                                    <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="enter your location" textAlignment="center" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="IET-wd-Kag" userLabel="studyingText">
                                         <rect key="frame" x="0.0" y="8" width="600" height="34"/>
                                         <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                         <fontDescription key="fontDescription" type="system" weight="light" pointSize="28"/>
                                         <textInputTraits key="textInputTraits" returnKeyType="done" enablesReturnKeyAutomatically="YES"/>
                                     </textField>
+                                    <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" mapType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="pSt-lC-t56" userLabel="MapView">
+                                        <rect key="frame" x="0.0" y="-66" width="600" height="438"/>
+                                    </mapView>
                                 </subviews>
                                 <color key="backgroundColor" name="selectedControlColor" catalog="System" colorSpace="catalog"/>
                                 <constraints>
@@ -93,9 +96,6 @@
                                     <constraint firstItem="IET-wd-Kag" firstAttribute="top" secondItem="QV1-zE-RaR" secondAttribute="top" constant="8" id="BJT-eB-aH8"/>
                                 </constraints>
                             </view>
-                            <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" mapType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="pSt-lC-t56" userLabel="MapView">
-                                <rect key="frame" x="0.0" y="162" width="600" height="438"/>
-                            </mapView>
                             <navigationBar contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="hcJ-Db-DC7">
                                 <rect key="frame" x="0.0" y="28" width="600" height="44"/>
                                 <items>
@@ -162,11 +162,8 @@
                             <constraint firstItem="qFf-I1-AEh" firstAttribute="height" secondItem="dC7-MW-K7G" secondAttribute="height" multiplier="0.15" id="7fb-ai-YcM"/>
                             <constraint firstAttribute="trailingMargin" secondItem="qFf-I1-AEh" secondAttribute="trailing" constant="-20" id="8bh-iN-SJQ"/>
                             <constraint firstItem="qFf-I1-AEh" firstAttribute="top" secondItem="hcJ-Db-DC7" secondAttribute="bottom" id="Buk-zk-MEd"/>
-                            <constraint firstItem="7uN-ar-9Q3" firstAttribute="top" secondItem="pSt-lC-t56" secondAttribute="bottom" id="G3g-zN-FFY"/>
                             <constraint firstItem="WA8-t7-qTA" firstAttribute="centerX" secondItem="dC7-MW-K7G" secondAttribute="centerX" id="H52-ki-BjT"/>
                             <constraint firstAttribute="trailingMargin" secondItem="hcJ-Db-DC7" secondAttribute="trailing" constant="-20" id="IoG-wv-VMG"/>
-                            <constraint firstItem="pSt-lC-t56" firstAttribute="top" secondItem="qFf-I1-AEh" secondAttribute="bottom" id="JUf-zx-xuM"/>
-                            <constraint firstAttribute="trailingMargin" secondItem="pSt-lC-t56" secondAttribute="trailing" constant="-20" id="JoU-fi-9AP"/>
                             <constraint firstItem="7uN-ar-9Q3" firstAttribute="top" secondItem="Q64-cL-XMH" secondAttribute="bottom" constant="20" id="PzW-Tm-FZN"/>
                             <constraint firstItem="hcJ-Db-DC7" firstAttribute="top" secondItem="Bsd-bE-Uh7" secondAttribute="bottom" constant="8" id="TbF-fW-aiX"/>
                             <constraint firstItem="QV1-zE-RaR" firstAttribute="top" secondItem="sAq-W3-Ynd" secondAttribute="bottom" constant="20" id="Xhd-pj-sR5"/>
@@ -176,7 +173,6 @@
                             <constraint firstItem="QV1-zE-RaR" firstAttribute="centerX" secondItem="dC7-MW-K7G" secondAttribute="centerX" id="l8v-d8-nVz"/>
                             <constraint firstItem="qFf-I1-AEh" firstAttribute="leading" secondItem="dC7-MW-K7G" secondAttribute="leadingMargin" constant="-20" id="mKM-56-mre"/>
                             <constraint firstItem="IET-wd-Kag" firstAttribute="width" secondItem="dC7-MW-K7G" secondAttribute="width" id="ov8-1Q-tn0"/>
-                            <constraint firstItem="pSt-lC-t56" firstAttribute="leading" secondItem="dC7-MW-K7G" secondAttribute="leadingMargin" constant="-20" id="qQb-wE-4uT"/>
                             <constraint firstItem="sAq-W3-Ynd" firstAttribute="centerX" secondItem="dC7-MW-K7G" secondAttribute="centerX" id="yUk-sm-NyA"/>
                             <constraint firstItem="sAq-W3-Ynd" firstAttribute="top" secondItem="hcJ-Db-DC7" secondAttribute="bottom" constant="20" id="zjs-GF-egy"/>
                         </constraints>
@@ -211,7 +207,7 @@
                             <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="U" translatesAutoresizingMaskIntoConstraints="NO" id="XEH-la-iiy">
                                 <rect key="frame" x="0.0" y="40" width="600" height="60"/>
                             </imageView>
-                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="Email" clearsOnBeginEditing="YES" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="ltF-fA-gg1">
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="Email" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="ltF-fA-gg1">
                                 <rect key="frame" x="20" y="140" width="560" height="50"/>
                                 <color key="backgroundColor" name="quaternaryLabelColor" catalog="System" colorSpace="catalog"/>
                                 <constraints>

@@ -8,7 +8,7 @@
 
 import UIKit
 
-class LoginViewController: UIViewController, FBSDKLoginButtonDelegate {
+class LoginViewController: UIViewController, UITextFieldDelegate, FBSDKLoginButtonDelegate {
     
     //# MARK: Outlets
     @IBOutlet weak var signUpStack: UIStackView!
@@ -27,10 +27,11 @@ class LoginViewController: UIViewController, FBSDKLoginButtonDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        // hide border
         signUpStack.layer.borderWidth = 0
         
-        
         Utils.hideActivityIndicator(view, activityIndicator: activityIndicator)
+        
         initializeTextfields()
         initializeFacebook()
     }
@@ -108,6 +109,9 @@ class LoginViewController: UIViewController, FBSDKLoginButtonDelegate {
         
         emailText.defaultTextAttributes = textAttributes
         passwordText.defaultTextAttributes = textAttributes
+        
+        emailText.delegate = self
+        passwordText.delegate = self
     }
     
     private func initializeFacebook() {
@@ -130,6 +134,27 @@ class LoginViewController: UIViewController, FBSDKLoginButtonDelegate {
         }
     }
     
+    
+    //# MARK: UITextFieldDelegate
+    func textFieldShouldReturn(textField: UITextField) -> Bool {
+        
+        if (textField == passwordText) {
+            textField.resignFirstResponder()
+            login("return tapped :)")
+        }
+
+        return true
+    }
+    
+    func textFieldDidBeginEditing(textField: UITextField) {
+        
+        // clear textfield only, if initial text 'Email' is shown
+        if (textField == emailText) {
+            if textField.text == "Email" {
+                textField.text = ""
+            }
+        }
+    }
     
     //# MARK: - FBSDKLoginButtonDelegate
     func loginButton(loginButton: FBSDKLoginButton!, didCompleteWithResult result: FBSDKLoginManagerLoginResult!, error: NSError!) {

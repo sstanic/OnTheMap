@@ -9,7 +9,7 @@
 import UIKit
 import MapKit
 
-class InformationPostingViewController: UIViewController {
+class InformationPostingViewController: UIViewController, UITextFieldDelegate {
     
     //# MARK: Outlets
     @IBOutlet weak var questionStack: UIStackView!
@@ -27,9 +27,15 @@ class InformationPostingViewController: UIViewController {
     let regionRadius: CLLocationDistance = 10000
     var parseUser: StudentInformation? // app user (parse data)
     
+    // only bottom textfield will move keyboard up
+    var moveKeyboard = false
+    
     //# MARK: Overrides
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        studyingText.delegate = self
+        urlText.delegate = self
         
         changeButtonStyle(submitButton)
         changeButtonStyle(findOnTheMapButton)
@@ -54,7 +60,7 @@ class InformationPostingViewController: UIViewController {
             if success {
                 self.showMap()
             }
-            // else do nothing
+            // else do nothing (error is already shown in forwardGeocoding)
         }
     }
     
@@ -66,7 +72,9 @@ class InformationPostingViewController: UIViewController {
         
         if !(isValidUrl(url)) {
             let alertMsg = "Please enter a valid URL"
-            Utils.showAlert(self, alertMessage: alertMsg, completion: nil)
+            Utils.showAlert(self, alertMessage: alertMsg) { () in
+                Utils.hideActivityIndicator(self.view, activityIndicator: self.activityIndicator)
+            }
             return
         }
 
@@ -329,5 +337,12 @@ class InformationPostingViewController: UIViewController {
         studyingText.hidden = false
         inputView?.hidden = false
         findOnTheMapButton.hidden = false
+    }
+    
+    
+    //# MARK: UITextFieldDelegate
+    func textFieldShouldReturn(textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
+        return true
     }
 }
