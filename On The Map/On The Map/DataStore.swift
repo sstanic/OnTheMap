@@ -10,6 +10,7 @@ import Foundation
 
 class DataStore: NSObject {
     
+    //# MARK: Attributes
     var studentInformationList = [StudentInformation]?()
     
     dynamic var isLoading = false
@@ -22,6 +23,7 @@ class DataStore: NSObject {
     
     private let concurrentDataQueue = dispatch_queue_create("eu.stanic.OnTheMap.dataQueue", DISPATCH_QUEUE_CONCURRENT)
     
+    //# MARK: Load Student Data
     func loadStudentData(loadCompletionHandler : (success: Bool, error: NSError?) -> Void) {
         
         self.notifyLoadingStudentData(true)
@@ -102,6 +104,7 @@ class DataStore: NSObject {
         }
     }
     
+    //# MARK: Notifications
     private func notifyLoadingStudentData(isLoading: Bool) {
         dispatch_async(Utils.GlobalMainQueue) {
             self.isLoading = isLoading
@@ -114,7 +117,7 @@ class DataStore: NSObject {
         }
     }
 
-    
+    //# MARK: Shared Instance
     class func sharedInstance() -> DataStore {
         
         struct Singleton {

@@ -28,5 +28,6 @@ I noted the comments during learning and develoment.
   Anyway this can be improved by asking the user, if the request should be stopped or continued
 
 
-== What I really missed (no requirements)
+== What I really missed (no requirements, no intro)
 - Unit tests (I am wondering if at least some kind of testing is introduced in project 4)
+  (And I am pretty sure I did not find every bug.... ;)

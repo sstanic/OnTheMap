@@ -91,7 +91,7 @@ class StudentsListViewController: UITableViewController {
         self.activityIndicator = activityIndicator
     }
     
-    //# MARK: TableView
+    //# MARK: TableView Overrides
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
 
         let cell = tableView.dequeueReusableCellWithIdentifier(cellIdentifier, forIndexPath: indexPath) as! CustomStudentsListTableViewCell
