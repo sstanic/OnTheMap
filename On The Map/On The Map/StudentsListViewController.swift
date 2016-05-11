@@ -21,7 +21,6 @@ class StudentsListViewController: UITableViewController {
         didSet {            
             if observeDataStore {
                 DataStore.sharedInstance().addObserver(self, forKeyPath: Utils.OberserverKeyIsLoading, options: .New, context: nil)
-                DataStore.sharedInstance().addObserver(self, forKeyPath: Utils.OberserverKeyIsLoadingUdacityUser, options: .New, context: nil)
             }
         }
     }
@@ -53,27 +52,12 @@ class StudentsListViewController: UITableViewController {
                 self.studentsTableView.reloadData()
             }
         }
-        
-        if keyPath == Utils.OberserverKeyIsLoadingUdacityUser {
-            
-            // show or hide the activity indicator dependent of the value
-            dispatch_async(Utils.GlobalMainQueue) {
-                if let val = change!["new"] as! Int? {
-                    if val == 0 {
-                        self.studentsTableView.reloadData()
-                    }
-                    else {
-                        // nothing to do here
-                    }
-                }
-            }
-        }
+
     }
     
     deinit {
         if observeDataStore {
             DataStore.sharedInstance().removeObserver(self, forKeyPath: Utils.OberserverKeyIsLoading)
-            DataStore.sharedInstance().removeObserver(self, forKeyPath: Utils.OberserverKeyIsLoadingUdacityUser)
         }
     }
     

@@ -126,23 +126,6 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
             let name = r.firstName.stringByAppendingString(" ").stringByAppendingString(r.lastName)
             let mapItem = StudentInformationMapItem(uniqueKey: r.uniqueKey, name: name, mediaUrl: r.mediaURL, location: CLLocationCoordinate2D(latitude: r.latitude, longitude: r.longitude))
             
-            // get udacity username
-            if Utils.LoadUserNamesFromUdacity {
-                mapItem.willChangeValueForKey("title")
-                
-                OTMClient.sharedInstance().requestUdacityUserName(r.uniqueKey) { (success, result, error) in
-                    if success {
-                        // only change user name if Udacity sent it back
-                        if result!.name != OTMClient.UdacityUser.UnknownUser {
-                            mapItem.title = result!.name
-                        }
-                    }
-                    // ignore failure - the udacity user name cannot be used
-                    
-                    mapItem.didChangeValueForKey("title")
-                }
-            }
-            
             mapItems.append(mapItem)
         }
         

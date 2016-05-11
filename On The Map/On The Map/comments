@@ -7,8 +7,6 @@ I noted the comments during learning and develoment.
 - Spec: Add a sign-up link: The provided link in the docs leads to the sing-in page, not to the sign-up page
 - Facebooks information "You have already authorized..." after the login. This looks like a common problem to many developers, so I did not do a deeper investigation. There is for sure a simple solution
 - I don't like the way how the information posting view is done. I'd prefer to create two sub-views that can be shown or hidden, instead of showing or hiding different parts of one view. This may be a topic for project 5 too, so I will have to deal with it later anyway.
-- Spec: "When the user taps a pin, it displays the pin annotation popup, with the student's name => (pulled from their Udacity profile) <= and the link associated with the student's pin
-  This is misleading as it might be understood to pull every student's name from Udacity after loading the data from the Parse server
 
 
 == What I did not do (by intention)

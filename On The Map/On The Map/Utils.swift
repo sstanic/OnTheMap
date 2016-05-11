@@ -33,10 +33,6 @@ class Utils {
     
     //# MARK: KVO for DataStore
     static let OberserverKeyIsLoading = "isLoading"
-    static let OberserverKeyIsLoadingUdacityUser = "isLoadingUdacityUsers"
-    
-    //# MARK: Udacity user
-    static let LoadUserNamesFromUdacity = false
     
     //# MARK: Alert
     static func showAlert(viewController: UIViewController, alertMessage: String, completion: (() -> Void)?) {
