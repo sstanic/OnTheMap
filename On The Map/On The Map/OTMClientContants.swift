@@ -84,6 +84,17 @@ extension OTMClient {
         static let UnknownUser = "<unknown>"
     }
     
+    struct StudentInformationAttributes {
+        static let UniqueKey = "uniqueKey"
+        static let FirstName = "firstName"
+        static let LastName = "lastName"
+        static let MapString = "mapString"
+        static let MediaUrl = "mediaURL"
+        static let Latitude = "latitude"
+        static let Longitude = "longitude"
+        
+    }
+    
     struct ErrorMessage {
         static let NetworkTimeout = "Network timeout. Please check your network connection."
         static let GeneralHttpRequestError = "Http request error. Error message: "

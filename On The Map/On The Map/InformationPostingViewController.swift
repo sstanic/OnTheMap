@@ -87,13 +87,13 @@ class InformationPostingViewController: UIViewController, UITextFieldDelegate {
         
         // create dictionary
         var studentInformationStartValues = [String:AnyObject]()
-        studentInformationStartValues["uniqueKey"] = studentInformationMapItem.uniqueKey
-        studentInformationStartValues["firstName"] = localUser.firstName
-        studentInformationStartValues["lastName"] = localUser.lastName
-        studentInformationStartValues["mapString"] = mapString
-        studentInformationStartValues["mediaURL"] = url!
-        studentInformationStartValues["latitude"] = studentInformationMapItem.coordinate.latitude
-        studentInformationStartValues["longitude"] = studentInformationMapItem.coordinate.longitude
+        studentInformationStartValues[OTMClient.StudentInformationAttributes.UniqueKey] = studentInformationMapItem.uniqueKey
+        studentInformationStartValues[OTMClient.StudentInformationAttributes.FirstName] = localUser.firstName
+        studentInformationStartValues[OTMClient.StudentInformationAttributes.LastName] = localUser.lastName
+        studentInformationStartValues[OTMClient.StudentInformationAttributes.MapString] = mapString
+        studentInformationStartValues[OTMClient.StudentInformationAttributes.MediaUrl] = url!
+        studentInformationStartValues[OTMClient.StudentInformationAttributes.Latitude] = studentInformationMapItem.coordinate.latitude
+        studentInformationStartValues[OTMClient.StudentInformationAttributes.Longitude] = studentInformationMapItem.coordinate.longitude
         
         // check if parse user already exists => use the objectId to update the user
         if let parseUser = self.parseUser {
@@ -219,13 +219,12 @@ class InformationPostingViewController: UIViewController, UITextFieldDelegate {
         
         CLGeocoder().geocodeAddressString(address) { (placemarks, error) in
             
-            dispatch_async(Utils.GlobalMainQueue) {
-                
-                Utils.hideActivityIndicator(self.view, activityIndicator: self.activityIndicator)
-                
-                if error != nil {
-                    if let clErr = CLError(rawValue: error!.code) {
-                        
+            Utils.hideActivityIndicator(self.view, activityIndicator: self.activityIndicator)
+            
+            if error != nil {
+                if let clErr = CLError(rawValue: error!.code) {
+                    
+                    dispatch_async(Utils.GlobalMainQueue) {
                         switch clErr {
                         case CLError.GeocodeFoundNoResult:
                             let alertMsg = "Location not found, please check your input."
@@ -237,26 +236,28 @@ class InformationPostingViewController: UIViewController, UITextFieldDelegate {
                             break
                         }
                     }
+                }
+                
+                forwardGeocodingCompletionHandler(success: false, error: error)
+            }
+            else {
+                if placemarks?.count > 0 {
+                    let placemark = placemarks?[0]
+                    let location = placemark?.location
+                    let coordinate = location?.coordinate
                     
-                    forwardGeocodingCompletionHandler(success: false, error: error)
+                    self.createMapAnnotation(coordinate!)
+                    self.setCurrentLocation(location!)
+                    
+                    forwardGeocodingCompletionHandler(success: true, error: nil)
                 }
                 else {
-                    if placemarks?.count > 0 {
-                        let placemark = placemarks?[0]
-                        let location = placemark?.location
-                        let coordinate = location?.coordinate
-                        
-                        self.createMapAnnotation(coordinate!)
-                        self.setCurrentLocation(location!)
-                        
-                        forwardGeocodingCompletionHandler(success: true, error: nil)
-                    }
-                    else {
+                    dispatch_async(Utils.GlobalMainQueue) {
                         let alertMsg = "Location not found, please check your input."
                         Utils.showAlert(self, alertMessage: alertMsg, completion: nil)
-                        
-                        forwardGeocodingCompletionHandler(success: false, error: error)
                     }
+                    
+                    forwardGeocodingCompletionHandler(success: false, error: error)
                 }
             }
         }
@@ -271,10 +272,9 @@ class InformationPostingViewController: UIViewController, UITextFieldDelegate {
         
         OTMClient.sharedInstance().requestUdacityUserName(uniqueId) { (success, result, error) in
             
+            Utils.hideActivityIndicator(self.view, activityIndicator: self.activityIndicator)
+            
             dispatch_async(Utils.GlobalMainQueue) {
-                
-                Utils.hideActivityIndicator(self.view, activityIndicator: self.activityIndicator)
-                
                 if success {
                     localUser = result!
                     

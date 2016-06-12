@@ -58,14 +58,12 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
         if keyPath == Utils.OberserverKeyIsLoading {
             
             // show or hide the activity indicator dependent of the value
-            dispatch_async(Utils.GlobalMainQueue) {
-                if let val = change!["new"] as! Int? {
-                    if val == 0 {
-                        Utils.hideActivityIndicator(self.view, activityIndicator: self.activityIndicator)
-                    }
-                    else {
-                        Utils.showActivityIndicator(self.view, activityIndicator: self.activityIndicator)
-                    }
+            if let val = change!["new"] as! Int? {
+                if val == 0 {
+                    Utils.hideActivityIndicator(self.view, activityIndicator: self.activityIndicator)
+                }
+                else {
+                    Utils.showActivityIndicator(self.view, activityIndicator: self.activityIndicator)
                 }
             }
             

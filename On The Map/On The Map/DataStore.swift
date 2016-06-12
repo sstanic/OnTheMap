@@ -20,7 +20,7 @@ class DataStore: NSObject {
         return !isLoading
     }
     
-    private let concurrentDataQueue = dispatch_queue_create("eu.stanic.OnTheMap.dataQueue", DISPATCH_QUEUE_CONCURRENT)
+    private let concurrentDataQueue = dispatch_queue_create("com.savvista.udacity.OnTheMap.dataQueue", DISPATCH_QUEUE_CONCURRENT)
     
     //# MARK: Load Student Data
     func loadStudentData(loadCompletionHandler : (success: Bool, error: NSError?) -> Void) {
