@@ -15,7 +15,7 @@ struct LocalUser {
     
     var name: String? {
         
-        let n = firstName!.stringByAppendingString(" ").stringByAppendingString(lastName!)
+        let n = (firstName! + " ") + lastName!
         
         if firstName!.isEmpty && lastName!.isEmpty {
             return OTMClient.UdacityUser.UnknownUser

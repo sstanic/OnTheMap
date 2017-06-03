@@ -23,7 +23,7 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
     var observeDataStore = false {
         didSet {            
             if observeDataStore {
-                DataStore.sharedInstance().addObserver(self, forKeyPath: Utils.OberserverKeyIsLoading, options: .New, context: nil)
+                DataStore.sharedInstance().addObserver(self, forKeyPath: Utils.OberserverKeyIsLoading, options: .new, context: nil)
             }
         }
     }
@@ -36,7 +36,7 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
         observeDataStore = true
     }
     
-    override func viewDidAppear(animated: Bool) {
+    override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(true)
         
         checkLocationAuthorizationStatus()
@@ -49,7 +49,7 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
         }
     }
     
-    override func observeValueForKeyPath(keyPath: String?, ofObject object: AnyObject?, change: [String : AnyObject]?, context: UnsafeMutablePointer<Void>) {
+    override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
 
         guard activityIndicator != nil else {
             return
@@ -58,7 +58,7 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
         if keyPath == Utils.OberserverKeyIsLoading {
             
             // show or hide the activity indicator dependent of the value
-            if let val = change!["new"] as! Int? {
+            if let val = change![.newKey] as! Int? {
                 if val == 0 {
                     Utils.hideActivityIndicator(self.view, activityIndicator: self.activityIndicator)
                 }
@@ -72,7 +72,7 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
     }
     
     //# MARK: - Initialization
-    private func initializeMapAndLocationManager() {
+    fileprivate func initializeMapAndLocationManager() {
         
         mapView.delegate = self
         
@@ -87,9 +87,9 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
     }
     
     //# MARK: Data access
-    private func getData() {
+    fileprivate func getData() {
         
-        dispatch_async(Utils.GlobalMainQueue) {
+        Utils.GlobalMainQueue.async {
             if DataStore.sharedInstance().isNotLoading {
                 if let students = DataStore.sharedInstance().studentInformationList {
                     self.createMapItems(students)
@@ -99,29 +99,29 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
     }
     
     //# MARK: Location & Geocoding
-    private func checkLocationAuthorizationStatus() {
+    fileprivate func checkLocationAuthorizationStatus() {
         
-        if CLLocationManager.authorizationStatus() == .AuthorizedWhenInUse {
+        if CLLocationManager.authorizationStatus() == .authorizedWhenInUse {
             mapView.showsUserLocation = true
         } else {
             locationManager.requestWhenInUseAuthorization()
         }
     }
     
-    private func setCurrentLocation(location: CLLocation) {
+    fileprivate func setCurrentLocation(_ location: CLLocation) {
         
         let coordinateRegion = MKCoordinateRegionMakeWithDistance(location.coordinate, regionRadius * 2.0, regionRadius * 2.0)
         mapView.setRegion(coordinateRegion, animated: true)
     }
     
-    private func createMapItems(results: [StudentInformation]) {
+    fileprivate func createMapItems(_ results: [StudentInformation]) {
         
         var mapItems = [StudentInformationMapItem]()
         
         for r in results {
             
             // use name from parse data
-            let name = r.firstName.stringByAppendingString(" ").stringByAppendingString(r.lastName)
+            let name = (r.firstName + " ") + r.lastName
             let mapItem = StudentInformationMapItem(uniqueKey: r.uniqueKey, name: name, mediaUrl: r.mediaURL, location: CLLocationCoordinate2D(latitude: r.latitude, longitude: r.longitude))
             
             mapItems.append(mapItem)
@@ -134,13 +134,13 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
     
     
     //# MARK: - MKMapViewDelegate
-    func mapView(mapView: MKMapView, viewForAnnotation annotation: MKAnnotation) -> MKAnnotationView? {
+    func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
         
         if let annotation = annotation as? StudentInformationMapItem {
             let identifier = "pin"
             var view: MKPinAnnotationView
             
-            if let dequeuedView = mapView.dequeueReusableAnnotationViewWithIdentifier(identifier)
+            if let dequeuedView = mapView.dequeueReusableAnnotationView(withIdentifier: identifier)
                 as? MKPinAnnotationView {
                 dequeuedView.annotation = annotation
                 view = dequeuedView
@@ -149,7 +149,7 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
                 view = MKPinAnnotationView(annotation: annotation, reuseIdentifier: identifier)
                 view.canShowCallout = true
                 view.calloutOffset = CGPoint(x: -5, y: 5)
-                let btn = UIButton(type: .DetailDisclosure)
+                let btn = UIButton(type: .detailDisclosure)
                 view.rightCalloutAccessoryView = btn as UIView
             }
             return view
@@ -157,18 +157,18 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
         return nil
     }
     
-    func mapView(mapView: MKMapView, annotationView view: MKAnnotationView, calloutAccessoryControlTapped control: UIControl) {
+    func mapView(_ mapView: MKMapView, annotationView view: MKAnnotationView, calloutAccessoryControlTapped control: UIControl) {
         
         if control == view.rightCalloutAccessoryView{
             if let url = view.annotation!.subtitle {
-                UIApplication.sharedApplication().openURL(NSURL(string: url!)!)
+                UIApplication.shared.openURL(URL(string: url!)!)
             }
         }
     }
     
     
     //# MARK: CLLocationManagerDelegate
-    func locationManager(manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         
         if !isMapInitialized {
             setCurrentLocation(locations.last!)

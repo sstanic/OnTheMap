@@ -20,7 +20,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate, FBSDKLoginButt
     @IBOutlet weak var loginFacebookButton: FBSDKLoginButton!
     
     //# MARK: Attributes
-    let signInURL = NSURL(string: "https://www.udacity.com/account/auth#!/signin")
+    let signInURL = URL(string: "https://www.udacity.com/account/auth#!/signin")
     // let signUpURL = NSURL(string: "https://www.udacity.com/account/auth#!/signup") // app spec: Link to sign-in (not to sign-up)
     
     //# MARK: Overrides
@@ -37,7 +37,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate, FBSDKLoginButt
     }
     
     //# MARK: - Actions
-    @IBAction func login(sender: AnyObject) {
+    @IBAction func login(_ sender: AnyObject) {
         
         let email = emailText.text!
         let pass = passwordText.text!
@@ -46,7 +46,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate, FBSDKLoginButt
         
         OTMClient.sharedInstance().authenticateWithUdacity(email, password: pass) { (success, error) in
         
-            dispatch_async(Utils.GlobalMainQueue) {
+            Utils.GlobalMainQueue.async {
                 if success {
                     self.openOnTheMap()
                     Utils.hideActivityIndicator(self.view, activityIndicator: self.activityIndicator)
@@ -71,41 +71,41 @@ class LoginViewController: UIViewController, UITextFieldDelegate, FBSDKLoginButt
         }
     }
     
-    @IBAction func loginWithFacebook(sender: AnyObject) {
+    @IBAction func loginWithFacebook(_ sender: AnyObject) {
         
         // The login is handeled by the FB framework (see loginButton(...)), this action is only called to show the activity indicator
         Utils.showActivityIndicator(view, activityIndicator: activityIndicator)
     }
     
-    @IBAction func signUp(sender: AnyObject) {
+    @IBAction func signUp(_ sender: AnyObject) {
         
         if let requestUrl = signInURL {
-            UIApplication.sharedApplication().openURL(requestUrl)
+            UIApplication.shared.openURL(requestUrl)
         }
     }
     
-    private func openOnTheMap() {
+    fileprivate func openOnTheMap() {
         
-        let tabViewController = self.storyboard!.instantiateViewControllerWithIdentifier("navigationController")
-        presentViewController(tabViewController, animated: true, completion: nil)
+        let tabViewController = self.storyboard!.instantiateViewController(withIdentifier: "navigationController")
+        present(tabViewController, animated: true, completion: nil)
     }
     
     //# MARK: - Initialization
-    private func initializeTextfields() {
+    fileprivate func initializeTextfields() {
         
         let textAttributes = [
-            NSForegroundColorAttributeName : UIColor.whiteColor(),
-            NSFontAttributeName: UIFont.boldSystemFontOfSize(20)
+            NSForegroundColorAttributeName : UIColor.white,
+            NSFontAttributeName: UIFont.boldSystemFont(ofSize: 20)
         ]
         
-        let emailPaddingView = UIView(frame: CGRectMake(0, 0, 10, self.emailText.frame.height))
-        let passwordPaddingView = UIView(frame: CGRectMake(0, 0, 10, self.passwordText.frame.height))
+        let emailPaddingView = UIView(frame: CGRect(x: 0, y: 0, width: 10, height: self.emailText.frame.height))
+        let passwordPaddingView = UIView(frame: CGRect(x: 0, y: 0, width: 10, height: self.passwordText.frame.height))
         
         emailText.leftView = emailPaddingView
-        emailText.leftViewMode = UITextFieldViewMode.Always
+        emailText.leftViewMode = UITextFieldViewMode.always
         
         passwordText.leftView = passwordPaddingView
-        passwordText.leftViewMode = UITextFieldViewMode.Always
+        passwordText.leftViewMode = UITextFieldViewMode.always
         
         emailText.defaultTextAttributes = textAttributes
         passwordText.defaultTextAttributes = textAttributes
@@ -114,12 +114,12 @@ class LoginViewController: UIViewController, UITextFieldDelegate, FBSDKLoginButt
         passwordText.delegate = self
     }
     
-    private func initializeFacebook() {
+    fileprivate func initializeFacebook() {
         
         loginFacebookButton.delegate = self
-        loginFacebookButton.loginBehavior = .Native
+        loginFacebookButton.loginBehavior = .native
         
-        if let cachedToken = FBSDKAccessToken.currentAccessToken() {
+        if let cachedToken = FBSDKAccessToken.current() {
             Utils.showActivityIndicator(view, activityIndicator: activityIndicator)
             OTMClient.sharedInstance().authenticateWithFacebook(cachedToken.tokenString) { (success, bool) in
                 if success {
@@ -136,17 +136,17 @@ class LoginViewController: UIViewController, UITextFieldDelegate, FBSDKLoginButt
     
     
     //# MARK: UITextFieldDelegate
-    func textFieldShouldReturn(textField: UITextField) -> Bool {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         
         if (textField == passwordText) {
             textField.resignFirstResponder()
-            login("return tapped :)")
+            login("return tapped :)" as AnyObject)
         }
 
         return true
     }
     
-    func textFieldDidBeginEditing(textField: UITextField) {
+    func textFieldDidBeginEditing(_ textField: UITextField) {
         
         // clear textfield only, if initial text 'Email' is shown
         if (textField == emailText) {
@@ -157,15 +157,15 @@ class LoginViewController: UIViewController, UITextFieldDelegate, FBSDKLoginButt
     }
     
     //# MARK: - FBSDKLoginButtonDelegate
-    func loginButton(loginButton: FBSDKLoginButton!, didCompleteWithResult result: FBSDKLoginManagerLoginResult!, error: NSError!) {
+    func loginButton(_ loginButton: FBSDKLoginButton!, didCompleteWith result: FBSDKLoginManagerLoginResult!, error: Error!) {
         
         if let error = error {
-            let userInfo = error.userInfo[NSLocalizedDescriptionKey] as! String
+            let userInfo = error.localizedDescription
             Utils.showAlert(self, alertMessage: userInfo, completion: nil)
             Utils.hideActivityIndicator(view, activityIndicator: activityIndicator)
         }
         else {
-            if let fbAccessToken = FBSDKAccessToken.currentAccessToken() {
+            if let fbAccessToken = FBSDKAccessToken.current() {
                 OTMClient.sharedInstance().authenticateWithFacebook(fbAccessToken.tokenString) { (success, error) in
                     if success {
                         self.openOnTheMap()
@@ -184,7 +184,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate, FBSDKLoginButt
         }
     }
     
-    func loginButtonDidLogOut(loginButton: FBSDKLoginButton!) {
+    func loginButtonDidLogOut(_ loginButton: FBSDKLoginButton!) {
         
         // This function will usually never be called.
         let loginManager: FBSDKLoginManager = FBSDKLoginManager()

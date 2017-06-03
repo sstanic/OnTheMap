@@ -208,6 +208,7 @@
 					12C396C01CACEAC100F566C4 = {
 						CreatedOnToolsVersion = 7.3;
 						DevelopmentTeam = D3XLMCMEYM;
+						LastSwiftMigration = 0830;
 					};
 				};
 			};
@@ -390,6 +391,7 @@
 				PROVISIONING_PROFILE = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "On The Map-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 3.0;
 			};
 			name = Debug;
 		};
@@ -410,6 +412,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "On The Map-Bridging-Header.h";
+				SWIFT_VERSION = 3.0;
 			};
 			name = Release;
 		};

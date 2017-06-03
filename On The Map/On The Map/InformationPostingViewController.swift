@@ -8,6 +8,30 @@
 
 import UIKit
 import MapKit
+// FIXME: comparison operators with optionals were removed from the Swift Standard Libary.
+// Consider refactoring the code to use the non-optional operators.
+fileprivate func < <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
+  switch (lhs, rhs) {
+  case let (l?, r?):
+    return l < r
+  case (nil, _?):
+    return true
+  default:
+    return false
+  }
+}
+
+// FIXME: comparison operators with optionals were removed from the Swift Standard Libary.
+// Consider refactoring the code to use the non-optional operators.
+fileprivate func > <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
+  switch (lhs, rhs) {
+  case let (l?, r?):
+    return l > r
+  default:
+    return rhs < lhs
+  }
+}
+
 
 class InformationPostingViewController: UIViewController, UITextFieldDelegate {
     
@@ -45,14 +69,14 @@ class InformationPostingViewController: UIViewController, UITextFieldDelegate {
         hideMap()
     }
     
-    override func viewDidAppear(animated: Bool) {
+    override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(true)
         
         queryUser()
     }
 
     //# MARK: - Actions
-    @IBAction func findOnTheMap(sender: AnyObject) {
+    @IBAction func findOnTheMap(_ sender: AnyObject) {
         
         let adr = studyingText.text!
         
@@ -64,7 +88,7 @@ class InformationPostingViewController: UIViewController, UITextFieldDelegate {
         }
     }
     
-    @IBAction func submit(sender: AnyObject) {
+    @IBAction func submit(_ sender: AnyObject) {
 
         Utils.showActivityIndicator(view, activityIndicator: activityIndicator)
         
@@ -87,17 +111,17 @@ class InformationPostingViewController: UIViewController, UITextFieldDelegate {
         
         // create dictionary
         var studentInformationStartValues = [String:AnyObject]()
-        studentInformationStartValues[OTMClient.StudentInformationAttributes.UniqueKey] = studentInformationMapItem.uniqueKey
-        studentInformationStartValues[OTMClient.StudentInformationAttributes.FirstName] = localUser.firstName
-        studentInformationStartValues[OTMClient.StudentInformationAttributes.LastName] = localUser.lastName
-        studentInformationStartValues[OTMClient.StudentInformationAttributes.MapString] = mapString
-        studentInformationStartValues[OTMClient.StudentInformationAttributes.MediaUrl] = url!
-        studentInformationStartValues[OTMClient.StudentInformationAttributes.Latitude] = studentInformationMapItem.coordinate.latitude
-        studentInformationStartValues[OTMClient.StudentInformationAttributes.Longitude] = studentInformationMapItem.coordinate.longitude
+        studentInformationStartValues[OTMClient.StudentInformationAttributes.UniqueKey] = studentInformationMapItem.uniqueKey as AnyObject
+        studentInformationStartValues[OTMClient.StudentInformationAttributes.FirstName] = localUser.firstName as AnyObject
+        studentInformationStartValues[OTMClient.StudentInformationAttributes.LastName] = localUser.lastName as AnyObject
+        studentInformationStartValues[OTMClient.StudentInformationAttributes.MapString] = mapString as AnyObject
+        studentInformationStartValues[OTMClient.StudentInformationAttributes.MediaUrl] = url! as AnyObject
+        studentInformationStartValues[OTMClient.StudentInformationAttributes.Latitude] = studentInformationMapItem.coordinate.latitude as AnyObject
+        studentInformationStartValues[OTMClient.StudentInformationAttributes.Longitude] = studentInformationMapItem.coordinate.longitude as AnyObject
         
         // check if parse user already exists => use the objectId to update the user
         if let parseUser = self.parseUser {
-            studentInformationStartValues["objectId"] = parseUser.objectId
+            studentInformationStartValues["objectId"] = parseUser.objectId as AnyObject
         }
         
         // create StudentInformation
@@ -112,10 +136,10 @@ class InformationPostingViewController: UIViewController, UITextFieldDelegate {
         }
     }
     
-    private func addUser(studentInformation: StudentInformation) {
+    fileprivate func addUser(_ studentInformation: StudentInformation) {
         
         OTMClient.sharedInstance().addStudentLocation(studentInformation) { (success, objectId, error) in
-            dispatch_async(Utils.GlobalMainQueue) {
+            Utils.GlobalMainQueue.async {
                 if success {
                     print("add student: success")
                     
@@ -125,7 +149,7 @@ class InformationPostingViewController: UIViewController, UITextFieldDelegate {
                             Utils.showAlert(self, alertMessage: "Data reload failed. Please try to reload manually.", completion: nil)
                         }
                         
-                        self.dismissViewControllerAnimated(true, completion: nil)
+                        self.dismiss(animated: true, completion: nil)
                     }
                 }
                 else {
@@ -140,10 +164,10 @@ class InformationPostingViewController: UIViewController, UITextFieldDelegate {
         }
     }
     
-    private func updateUser(studentInformation: StudentInformation) {
+    fileprivate func updateUser(_ studentInformation: StudentInformation) {
         
         OTMClient.sharedInstance().updateStudentLocation(studentInformation) { (success, error) in
-            dispatch_async(Utils.GlobalMainQueue) {
+            Utils.GlobalMainQueue.async {
                 if success {
                     print("update student: success")
                     
@@ -152,7 +176,7 @@ class InformationPostingViewController: UIViewController, UITextFieldDelegate {
                             Utils.showAlert(self, alertMessage: "Data reload failed. Please try to reload manually.", completion: nil)
                         }
                         
-                        self.dismissViewControllerAnimated(true, completion: nil)
+                        self.dismiss(animated: true, completion: nil)
                     }
                 }
                 else {
@@ -167,17 +191,17 @@ class InformationPostingViewController: UIViewController, UITextFieldDelegate {
         }
     }
     
-    @IBAction func cancel(sender: AnyObject) {
+    @IBAction func cancel(_ sender: AnyObject) {
         
-        dismissViewControllerAnimated(true, completion: nil)
+        dismiss(animated: true, completion: nil)
     }
     
     //# MARK: - Validation
-    func isValidUrl (urlString: String?) -> Bool {
+    func isValidUrl (_ urlString: String?) -> Bool {
         
         if let urlString = urlString {
-            if let url = NSURL(string: urlString) {
-                return UIApplication.sharedApplication().canOpenURL(url)
+            if let url = URL(string: urlString) {
+                return UIApplication.shared.canOpenURL(url)
             }
         }
         
@@ -192,7 +216,7 @@ class InformationPostingViewController: UIViewController, UITextFieldDelegate {
         Utils.showActivityIndicator(view, activityIndicator: activityIndicator)
         
         OTMClient.sharedInstance().queryStudentLocation(uniqueKey) { (success, studentInformation, error) in
-            dispatch_async(Utils.GlobalMainQueue) {
+            Utils.GlobalMainQueue.async {
                 if success {
                     self.parseUser = studentInformation!
                     self.urlText.text = self.parseUser?.mediaURL
@@ -201,7 +225,7 @@ class InformationPostingViewController: UIViewController, UITextFieldDelegate {
                 else {
                     if error?.code != 2 {
                         Utils.showAlert(self, alertMessage: "Data access to On The Map server failed (server not available or network timeout). Please check your network connection.") { () in
-                            self.dismissViewControllerAnimated(true, completion: nil)
+                            self.dismiss(animated: true, completion: nil)
                         }
                     }
                     // else user not (yet) available - a new user will be created
@@ -213,7 +237,7 @@ class InformationPostingViewController: UIViewController, UITextFieldDelegate {
     }
     
     //# MARK: Location & Geocoding
-    func forwardGeocoding(address: String, forwardGeocodingCompletionHandler: (success: Bool, error: NSError?) -> Void) {
+    func forwardGeocoding(_ address: String, forwardGeocodingCompletionHandler: @escaping (_ success: Bool, _ error: Error?) -> Void) {
         
         Utils.showActivityIndicator(view, activityIndicator: activityIndicator)
         
@@ -222,11 +246,11 @@ class InformationPostingViewController: UIViewController, UITextFieldDelegate {
             Utils.hideActivityIndicator(self.view, activityIndicator: self.activityIndicator)
             
             if error != nil {
-                if let clErr = CLError(rawValue: error!.code) {
+                if let clErr = error?._code {
                     
-                    dispatch_async(Utils.GlobalMainQueue) {
+                    Utils.GlobalMainQueue.async {
                         switch clErr {
-                        case CLError.GeocodeFoundNoResult:
+                        case CLError.geocodeFoundNoResult.rawValue:
                             let alertMsg = "Location not found, please check your input."
                             Utils.showAlert(self, alertMessage: alertMsg, completion: nil)
                             break
@@ -238,7 +262,7 @@ class InformationPostingViewController: UIViewController, UITextFieldDelegate {
                     }
                 }
                 
-                forwardGeocodingCompletionHandler(success: false, error: error)
+                forwardGeocodingCompletionHandler(false, error! as NSError)
             }
             else {
                 if placemarks?.count > 0 {
@@ -249,21 +273,21 @@ class InformationPostingViewController: UIViewController, UITextFieldDelegate {
                     self.createMapAnnotation(coordinate!)
                     self.setCurrentLocation(location!)
                     
-                    forwardGeocodingCompletionHandler(success: true, error: nil)
+                    forwardGeocodingCompletionHandler(true, nil)
                 }
                 else {
-                    dispatch_async(Utils.GlobalMainQueue) {
+                    Utils.GlobalMainQueue.async {
                         let alertMsg = "Location not found, please check your input."
                         Utils.showAlert(self, alertMessage: alertMsg, completion: nil)
                     }
                     
-                    forwardGeocodingCompletionHandler(success: false, error: error)
+                    forwardGeocodingCompletionHandler(false, error! as NSError)
                 }
             }
         }
     }
     
-    func createMapAnnotation(coordinate: CLLocationCoordinate2D) {
+    func createMapAnnotation(_ coordinate: CLLocationCoordinate2D) {
         
         let uniqueId = OTMClient.sharedInstance().userKey!
         var localUser: LocalUser? = nil
@@ -274,11 +298,11 @@ class InformationPostingViewController: UIViewController, UITextFieldDelegate {
             
             Utils.hideActivityIndicator(self.view, activityIndicator: self.activityIndicator)
             
-            dispatch_async(Utils.GlobalMainQueue) {
+            Utils.GlobalMainQueue.async {
                 if success {
                     localUser = result!
                     
-                    print("create map annotation for udacity student: \(localUser)")
+                    print("create map annotation for udacity student: \(String(describing: localUser))")
                     
                     let url = ""
                     let annotation = StudentInformationMapItem(uniqueKey: uniqueId, name: (localUser?.name)!, mediaUrl: url, location: coordinate)
@@ -293,55 +317,55 @@ class InformationPostingViewController: UIViewController, UITextFieldDelegate {
         }
     }
     
-    private func setCurrentLocation(location: CLLocation) {
+    fileprivate func setCurrentLocation(_ location: CLLocation) {
         
         let coordinateRegion = MKCoordinateRegionMakeWithDistance(location.coordinate, regionRadius * 2.0, regionRadius * 2.0)
         mapView.setRegion(coordinateRegion, animated: true)
     }
     
     //# MARK: Activity Indicator
-    private func initializeActivityIndicator() {
+    fileprivate func initializeActivityIndicator() {
         
-        activityIndicator.activityIndicatorViewStyle = .WhiteLarge
+        activityIndicator.activityIndicatorViewStyle = .whiteLarge
         activityIndicator.hidesWhenStopped = true
     }
     
     //# MARK: UI Mgmt
-    private func changeButtonStyle(button: UIButton) {
+    fileprivate func changeButtonStyle(_ button: UIButton) {
         
-        button.backgroundColor = UIColor.whiteColor()
+        button.backgroundColor = UIColor.white
         button.layer.cornerRadius = 10
         button.layer.borderWidth = 1
-        button.layer.borderColor = UIColor.whiteColor().CGColor
+        button.layer.borderColor = UIColor.white.cgColor
     }
     
-    private func showMap() {
+    fileprivate func showMap() {
         
-        urlView.hidden = false
-        mapView.hidden = false
-        submitButton.hidden = false
+        urlView.isHidden = false
+        mapView.isHidden = false
+        submitButton.isHidden = false
 
-        questionStack.hidden = true
-        studyingText.hidden = true
-        inputView?.hidden = true
-        findOnTheMapButton.hidden = true
+        questionStack.isHidden = true
+        studyingText.isHidden = true
+        inputView?.isHidden = true
+        findOnTheMapButton.isHidden = true
     }
     
-    private func hideMap() {
+    fileprivate func hideMap() {
         
-        urlView.hidden = true
-        mapView.hidden = true
-        submitButton.hidden = true
+        urlView.isHidden = true
+        mapView.isHidden = true
+        submitButton.isHidden = true
         
-        questionStack.hidden = false
-        studyingText.hidden = false
-        inputView?.hidden = false
-        findOnTheMapButton.hidden = false
+        questionStack.isHidden = false
+        studyingText.isHidden = false
+        inputView?.isHidden = false
+        findOnTheMapButton.isHidden = false
     }
     
     
     //# MARK: UITextFieldDelegate
-    func textFieldShouldReturn(textField: UITextField) -> Bool {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.resignFirstResponder()
         return true
     }

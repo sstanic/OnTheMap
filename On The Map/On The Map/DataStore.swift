@@ -11,7 +11,7 @@ import Foundation
 class DataStore: NSObject {
     
     //# MARK: Attributes
-    var studentInformationList = [StudentInformation]?()
+    var studentInformationList: [StudentInformation]? = []
     
     dynamic var isLoading = false
     
@@ -20,52 +20,52 @@ class DataStore: NSObject {
         return !isLoading
     }
     
-    private let concurrentDataQueue = dispatch_queue_create("com.savvista.udacity.OnTheMap.dataQueue", DISPATCH_QUEUE_CONCURRENT)
+    fileprivate let concurrentDataQueue = DispatchQueue(label: "com.savvista.udacity.OnTheMap.dataQueue", attributes: DispatchQueue.Attributes.concurrent)
     
     //# MARK: Load Student Data
-    func loadStudentData(loadCompletionHandler : (success: Bool, error: NSError?) -> Void) {
+    func loadStudentData(_ loadCompletionHandler : @escaping (_ success: Bool, _ error: NSError?) -> Void) {
         
         self.notifyLoadingStudentData(true)
-        dispatch_barrier_sync(self.concurrentDataQueue) {
+        self.concurrentDataQueue.sync(flags: .barrier, execute: {
             self.studentInformationList = nil
-        }
+        }) 
         
         OTMClient.sharedInstance().getStudentLocations() { (success, results, error) in
 
             if success {
                 self.notifyLoadingStudentData(false)
-                dispatch_barrier_sync(self.concurrentDataQueue) {
+                self.concurrentDataQueue.sync(flags: .barrier, execute: {
                     self.studentInformationList = results!
-                }
+                }) 
                 
                 // return with success and load async the udacity user names
-                loadCompletionHandler(success: true, error: nil)
+                loadCompletionHandler(true, nil)
             }
             else {
                 self.notifyLoadingStudentData(false)
-                loadCompletionHandler(success: false, error: error)
+                loadCompletionHandler(false, error)
             }
         }
     }
     
-    func reloadStudentData(reloadCompletionHandler : (success: Bool, error: NSError?) -> Void) {
+    func reloadStudentData(_ reloadCompletionHandler : @escaping (_ success: Bool, _ error: NSError?) -> Void) {
         
         if isNotLoading {
             loadStudentData() { (success, error) in
                 
                 if success {
-                    reloadCompletionHandler(success: true, error: nil)
+                    reloadCompletionHandler(true, nil)
                 }
                 else {
-                    reloadCompletionHandler(success: false, error: error)
+                    reloadCompletionHandler(false, error)
                 }
             }
         }
     }
     
     //# MARK: Notifications
-    private func notifyLoadingStudentData(isLoading: Bool) {
-        dispatch_async(Utils.GlobalMainQueue) {
+    fileprivate func notifyLoadingStudentData(_ isLoading: Bool) {
+        Utils.GlobalMainQueue.async {
             self.isLoading = isLoading
         }
     }

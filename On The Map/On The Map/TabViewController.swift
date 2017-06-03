@@ -18,7 +18,7 @@ class TabViewController: UITabBarController {
     var observeDataStore = false {
         didSet {
             if observeDataStore {
-                DataStore.sharedInstance().addObserver(self, forKeyPath: Utils.OberserverKeyIsLoading, options: .New, context: nil)
+                DataStore.sharedInstance().addObserver(self, forKeyPath: Utils.OberserverKeyIsLoading, options: .new, context: nil)
             }
         }
     }
@@ -30,21 +30,21 @@ class TabViewController: UITabBarController {
         observeDataStore = true
     }
     
-    override func viewDidAppear(animated: Bool) {
-        refresh("initial data load")
+    override func viewDidAppear(_ animated: Bool) {
+        refresh("initial data load" as AnyObject)
     }
     
-    override func observeValueForKeyPath(keyPath: String?, ofObject object: AnyObject?, change: [String : AnyObject]?, context: UnsafeMutablePointer<Void>) {
+    override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
         
         if keyPath == Utils.OberserverKeyIsLoading {
             // show or hide the logout dependent of the value
-            dispatch_async(Utils.GlobalMainQueue) {
-                if let val = change!["new"] as! Int? {
+            Utils.GlobalMainQueue.async {
+                if let val = change![.newKey] as! Int? {
                     if val == 0 {
-                        self.logoutButton.enabled = true
+                        self.logoutButton.isEnabled = true
                     }
                     else {
-                        self.logoutButton.enabled = false
+                        self.logoutButton.isEnabled = false
                     }
                 }
             }
@@ -58,20 +58,20 @@ class TabViewController: UITabBarController {
     }
     
     //# MARK: - Actions
-    @IBAction func logout(sender: AnyObject) {
+    @IBAction func logout(_ sender: AnyObject) {
         
         if OTMClient.sharedInstance().fbToken != nil {
             
             OTMClient.sharedInstance().logoutFromFacebook()
-            self.dismissViewControllerAnimated(true, completion: nil)
+            self.dismiss(animated: true, completion: nil)
         }
         else {
             
             OTMClient.sharedInstance().logoutFromUdacity() { (success, error) in
                 
-                dispatch_async(Utils.GlobalMainQueue) {
+                Utils.GlobalMainQueue.async {
                     if success {
-                        self.dismissViewControllerAnimated(true, completion: nil)
+                        self.dismiss(animated: true, completion: nil)
                     }
                     else {
                         let userInfo = error!.userInfo[NSLocalizedDescriptionKey] as! String
@@ -82,13 +82,13 @@ class TabViewController: UITabBarController {
         }
     }
     
-    @IBAction func refresh(sender: AnyObject) {
+    @IBAction func refresh(_ sender: AnyObject) {
         
         if DataStore.sharedInstance().isNotLoading {
-            self.refreshButton!.enabled = false
+            self.refreshButton!.isEnabled = false
             DataStore.sharedInstance().loadStudentData() { (success, error) in
                 
-                dispatch_async(Utils.GlobalMainQueue) {
+                Utils.GlobalMainQueue.async {
                     if success {
                         // yay! :)
                     }
@@ -98,16 +98,16 @@ class TabViewController: UITabBarController {
                         Utils.showAlert(self, alertMessage: userInfo, completion: nil)
                     }
                     
-                    self.refreshButton!.enabled = true
+                    self.refreshButton!.isEnabled = true
                 }
             }
         }
     }
     
-    @IBAction func postInformation(sender: AnyObject) {
+    @IBAction func postInformation(_ sender: AnyObject) {
         
-        let infoPostController = self.storyboard?.instantiateViewControllerWithIdentifier("informationPosting") as! InformationPostingViewController
-        presentViewController(infoPostController, animated: true, completion: nil)
+        let infoPostController = self.storyboard?.instantiateViewController(withIdentifier: "informationPosting") as! InformationPostingViewController
+        present(infoPostController, animated: true, completion: nil)
     }
 }
 

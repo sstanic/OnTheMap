@@ -81,7 +81,7 @@ struct StudentInformation {
         }
     }
     
-    private func isAvailable(key: String, dict: [String:AnyObject]) -> Bool {
+    fileprivate func isAvailable(_ key: String, dict: [String:AnyObject]) -> Bool {
         
         guard dict[key] != nil else {
             return false

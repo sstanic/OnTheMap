@@ -27,7 +27,7 @@ class StudentInformationMapItem: NSObject, MKAnnotation {
     
     var title: String? {
         
-        willSet { willChangeValueForKey("title") }
-        didSet { didChangeValueForKey("title") }
+        willSet { willChangeValue(forKey: "title") }
+        didSet { didChangeValue(forKey: "title") }
     }
 }

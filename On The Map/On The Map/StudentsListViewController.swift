@@ -20,7 +20,7 @@ class StudentsListViewController: UITableViewController {
     var observeDataStore = false {
         didSet {            
             if observeDataStore {
-                DataStore.sharedInstance().addObserver(self, forKeyPath: Utils.OberserverKeyIsLoading, options: .New, context: nil)
+                DataStore.sharedInstance().addObserver(self, forKeyPath: Utils.OberserverKeyIsLoading, options: .new, context: nil)
             }
         }
     }
@@ -34,12 +34,12 @@ class StudentsListViewController: UITableViewController {
         observeDataStore = true
     }
     
-    override func observeValueForKeyPath(keyPath: String?, ofObject object: AnyObject?, change: [String : AnyObject]?, context: UnsafeMutablePointer<Void>) {
+    override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
         
         if keyPath == Utils.OberserverKeyIsLoading {
             
             // show or hide the activity indicator dependent of the value
-            if let val = change!["new"] as! Int? {
+            if let val = change![.newKey] as! Int? {
                 if val == 0 {
                     Utils.hideActivityIndicator(self.view, activityIndicator: self.activityIndicator)
                 }
@@ -48,7 +48,7 @@ class StudentsListViewController: UITableViewController {
                 }
             }
             
-            dispatch_async(Utils.GlobalMainQueue) {
+            Utils.GlobalMainQueue.async {
                 self.studentsTableView.reloadData()
             }
         }
@@ -62,13 +62,13 @@ class StudentsListViewController: UITableViewController {
     }
     
     //# MARK: - Initialize
-    private func initializeAcitivityIndicator() {
+    fileprivate func initializeAcitivityIndicator() {
         
-        let activityIndicator = UIActivityIndicatorView(activityIndicatorStyle: UIActivityIndicatorViewStyle.WhiteLarge)
-        activityIndicator.color = UIColor.darkGrayColor()
+        let activityIndicator = UIActivityIndicatorView(activityIndicatorStyle: UIActivityIndicatorViewStyle.whiteLarge)
+        activityIndicator.color = UIColor.darkGray
         
         // seperators not visible without setting them in code
-        tableView.separatorStyle = UITableViewCellSeparatorStyle.SingleLine;
+        tableView.separatorStyle = UITableViewCellSeparatorStyle.singleLine;
         
         tableView.backgroundView = activityIndicator
         
@@ -76,38 +76,38 @@ class StudentsListViewController: UITableViewController {
     }
     
     //# MARK: TableView Overrides
-    override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 
-        let cell = tableView.dequeueReusableCellWithIdentifier(cellIdentifier, forIndexPath: indexPath) as! CustomStudentsListTableViewCell
+        let cell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier, for: indexPath) as! CustomStudentsListTableViewCell
         
         let studentLocation = DataStore.sharedInstance().studentInformationList![indexPath.row]
         
-        cell.studentNameTextField.text = studentLocation.firstName.stringByAppendingString(" ").stringByAppendingString(studentLocation.lastName)
+        cell.studentNameTextField.text = (studentLocation.firstName + " ") + studentLocation.lastName
         cell.studentMediaURLTextField.text = studentLocation.mediaURL
         
         return cell
     }
     
-    override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
         return DataStore.sharedInstance().studentInformationList!.count
     }
     
-    override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
         let studentInformation = DataStore.sharedInstance().studentInformationList![indexPath.row]
         
-        if let url = NSURL(string: studentInformation.mediaURL) {
-            UIApplication.sharedApplication().openURL(url)
+        if let url = URL(string: studentInformation.mediaURL) {
+            UIApplication.shared.openURL(url)
         }
     }
     
-    override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
+    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         
         return 66
     }
     
-    override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
+    override func numberOfSections(in tableView: UITableView) -> Int {
         
         guard (DataStore.sharedInstance().studentInformationList) != nil else {
             return 0
