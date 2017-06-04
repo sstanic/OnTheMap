@@ -1,6 +1,7 @@
 # On The Map
 On The Map is an iPhone app that shows the location and additional information about other students in Udacity's iOS Developer Nanodegree course.
 Users can add their own location & information and additionally login via FB added for a comfortable user experience.
+Udacity changed the DB server. The changes are not implemented in the app. It will currently not work as expected.
 
 ## Documentation
 This readme is the only documentation provided.
